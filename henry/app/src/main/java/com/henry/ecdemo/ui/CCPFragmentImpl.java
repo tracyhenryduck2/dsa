@@ -2,10 +2,6 @@ package com.henry.ecdemo.ui;
 
 import android.view.View;
 
-/**
- * com.henry.ecdemo.ui in ECDemo_Android
- * Created by Jorstin on 2015/6/16.
- */
 public class CCPFragmentImpl extends CCPActivityBase {
     final private CCPFragment mFragment;
 

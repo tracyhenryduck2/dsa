@@ -3,9 +3,6 @@ package com.henry.ecdemo.pojo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by luhuashan on 17/4/17.
- */
 public class Person implements Parcelable {
 
     private String name;

@@ -13,7 +13,7 @@ import com.henry.ecdemo.common.utils.LogUtil;
 
 public class SpinnerSelectView extends Button implements View.OnClickListener{
 
-    private static final String TAG = "ECSDK_Demo.SpinnerSelectView";
+    private static final String TAG = "henry_dianying.SpinnerSelectView";
 
     /**选项资源菜单*/
     private String[] mItems ;

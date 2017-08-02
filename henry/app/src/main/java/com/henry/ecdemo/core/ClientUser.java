@@ -8,9 +8,6 @@ import com.yuntongxun.ecsdk.ECInitParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Jorstin on 2015/3/18.
- */
 public class ClientUser implements Parcelable{
 
     public static final Parcelable.Creator<ClientUser> CREATOR = new Parcelable.Creator<ClientUser>() {

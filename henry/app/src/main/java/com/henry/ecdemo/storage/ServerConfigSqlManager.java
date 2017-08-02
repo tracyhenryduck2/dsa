@@ -14,9 +14,6 @@ import com.henry.ecdemo.core.comparator.ServerConfigBean;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by luhuashan on 16/3/17.
- */
 public class ServerConfigSqlManager  {
 
     static final String SERVER_CONFIG_DATABASE_NAME = "ECDEMO_ServerConfig.db";

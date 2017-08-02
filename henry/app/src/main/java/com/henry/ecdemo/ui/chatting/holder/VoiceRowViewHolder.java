@@ -29,12 +29,6 @@ import com.henry.ecdemo.ui.chatting.view.CCPAnimImageView;
 import com.yuntongxun.ecsdk.ECMessage;
 import com.yuntongxun.ecsdk.im.ECVoiceMessageBody;
 
-
-/**
- * @author 容联•云通讯
- * @date 2014-12-9
- * @version 4.0
- */
 public class VoiceRowViewHolder extends BaseHolder {
 
     public TextView contentTv;

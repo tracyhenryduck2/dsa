@@ -22,14 +22,10 @@ import com.henry.ecdemo.common.utils.LogUtil;
 import com.henry.ecdemo.common.utils.SupportSwipeModeUtils;
 import com.henry.ecdemo.common.view.SwipeBackLayout;
 
-/**
- * com.henry.ecdemo.ui in ECDemo_Android
- * Created by Jorstin on 2015/6/19.
- */
 public class ECFragmentActivity extends FragmentActivity
         implements SwipeActivityManager.SwipeListener , SwipeBackLayout.OnSwipeGestureDelegate{
 
-    private static final String TAG = "ECSDK_Demo.ECFragmentActivity";
+    private static final String TAG = "henry_dianying.ECFragmentActivity";
 
     public SwipeBackLayout mSwipeBackLayout;
     public boolean mOnDragging;

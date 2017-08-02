@@ -33,11 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-/**
- * @author Jorstin Chan
- * @date 2014-4-17
- * @version 1.0
- */
 public class DescriptionTxRow extends BaseChattingRow{
 
 	public DescriptionTxRow(int type){

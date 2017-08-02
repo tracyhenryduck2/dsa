@@ -34,7 +34,7 @@ public class PhoneRouterUI extends ECSuperActivity{
         getTopBarView().setTopBarToStatus(1, -1,
                 -1, null,
                 null,
-                getString(R.string.app_company), null, null);
+                getString(R.string.app_name), null, null);
 
         CCPAppManager.addActivity(this);
 

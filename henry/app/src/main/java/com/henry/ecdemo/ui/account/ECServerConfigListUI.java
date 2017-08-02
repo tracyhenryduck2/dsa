@@ -27,9 +27,6 @@ import java.io.InvalidClassException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by luhuashan on 16/3/18.
- */
 public class ECServerConfigListUI extends ECSuperActivity implements View.OnClickListener {
     private static final String TAG = "ECServerConfigListUI";
 

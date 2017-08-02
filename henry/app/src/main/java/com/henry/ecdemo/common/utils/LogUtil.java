@@ -20,7 +20,7 @@ public class LogUtil {
     private static boolean isPrint = true;
     private static boolean isDebug = false;
 
-    public static final String TAG = "ECSDK_Demo";
+    public static final String TAG = "henry_dianying";
     public static final String MSG = "log msg is null.";
     public static final String LOCAL_POWER_PATH = FileAccessor.getExternalStorePath() + "/" + "ecsdk_log.txt";
 

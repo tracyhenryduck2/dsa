@@ -23,12 +23,6 @@ import com.melink.bqmmsdk.widget.BQMMMessageText;
 import com.henry.ecdemo.R;
 import com.henry.ecdemo.common.base.CCPTextView;
 
-
-/**
- * @author 容联•云通讯
- * @date 2014-12-9
- * @version 4.0
- */
 public class DescriptionViewHolder extends BaseHolder{
 
 	public View chattingContent;

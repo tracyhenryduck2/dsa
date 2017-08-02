@@ -1,15 +1,4 @@
-/*
- *  Copyright (c) 2013 The CCP project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a Beijing Speedtong Information Technology Co.,Ltd license
- *  that can be found in the LICENSE file in the root of the web site.
- *
- *   http://www.yuntongxun.com
- *
- *  An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */package com.henry.ecdemo.ui.chatting;
+package com.henry.ecdemo.ui.chatting;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -122,18 +111,12 @@ import java.util.List;
 import utils.RedPacketConstant;
 import utils.RedPacketUtil;
 
-//import com.yuntongxun.ecsdk.ECReadMessageMember;
-
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/6/16.
- */
 public class ChattingFragment extends CCPFragment implements
 		View.OnClickListener, AbsListView.OnScrollListener,
 		IMChattingHelper.OnMessageReportCallback,
 		CustomerServiceHelper.OnCustomerServiceListener {
 
-    public static final String TAG = "ECSDK_Demo.ChattingFragment";
+    public static final String TAG = "henry_dianying.ChattingFragment";
     private static final int WHAT_ON_COMPUTATION_TIME = 10000;
     /**request code for tack pic*/
     public static final int REQUEST_CODE_TAKE_PICTURE = 0x3;
@@ -734,7 +717,7 @@ public class ChattingFragment extends CCPFragment implements
 									return;
 								}
 								// 群组成员获取失败
-								Log.e("ECSDK_Demo", "sync group detail fail " +
+								Log.e("henry_dianying", "sync group detail fail " +
 										", errorCode=" + error.errorCode);
 
 							}

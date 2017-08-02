@@ -25,10 +25,6 @@ import com.henry.ecdemo.ui.ECSuperActivity;
 import java.io.File;
 import java.util.List;
 
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/3/30.
- */
 public class ImageGralleryPagerActivity extends ECSuperActivity implements View.OnClickListener{
 
     private static final String TAG = "ImageGralleryPagerActivity";

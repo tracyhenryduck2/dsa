@@ -26,13 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/6/16.
- */
 public class CustomerServiceHelper {
 
-    private static final String TAG = "ECSDK_Demo.CustomerServiceHelper";
+    private static final String TAG = "henry_dianying.CustomerServiceHelper";
     private static CustomerServiceHelper ourInstance = new CustomerServiceHelper();
 
     private ECDeskManager mDeskManager;

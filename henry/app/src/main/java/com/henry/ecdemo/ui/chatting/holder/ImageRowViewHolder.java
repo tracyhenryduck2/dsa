@@ -20,12 +20,6 @@ import android.widget.TextView;
 
 import com.henry.ecdemo.R;
 
-
-/**
- * @author 容联•云通讯
- * @date 2014-12-9
- * @version 4.0
- */
 public class ImageRowViewHolder extends BaseHolder {
 
 	public ImageView chattingContentIv;

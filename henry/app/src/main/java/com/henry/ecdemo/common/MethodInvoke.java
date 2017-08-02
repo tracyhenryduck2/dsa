@@ -12,7 +12,7 @@ import com.henry.ecdemo.common.utils.LogUtil;
 import com.henry.ecdemo.ui.ActivityTransition;
 
 public class MethodInvoke {
-    private static final String TAG = "ECSDK_Demo.MethodInvoke";
+    private static final String TAG = "henry_dianying.MethodInvoke";
 
     public static int getTransitionValue(String componentName) {
         Class<?> clazz = getTransitionClass(componentName);

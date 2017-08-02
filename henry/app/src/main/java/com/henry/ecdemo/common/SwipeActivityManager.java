@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class SwipeActivityManager {
 
-    private static final String TAG = "ECSDK_Demo.SwipeActivityManager";
+    private static final String TAG = "henry_dianying.SwipeActivityManager";
 
     private static LinkedList<WeakReference<SwipeListener>> mLinkedList = new LinkedList<WeakReference<SwipeListener>>();
 

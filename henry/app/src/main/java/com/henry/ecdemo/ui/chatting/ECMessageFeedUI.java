@@ -27,9 +27,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by luhuashan on 16/6/18.
- */
 public class ECMessageFeedUI extends ECSuperActivity implements View.OnClickListener,XListView.IXListViewListener, NetUtils.ResultCallBack {
     @Override
     protected int getLayoutId() {

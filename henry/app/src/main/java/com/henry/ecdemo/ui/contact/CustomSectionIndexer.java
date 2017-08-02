@@ -6,10 +6,6 @@ import com.henry.ecdemo.common.utils.LogUtil;
 
 import java.util.Arrays;
 
-/**
- * com.henry.ecdemo.ui.contact in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 public class CustomSectionIndexer  implements SectionIndexer {
     private final String[] mSections;//
     private final int[] mPositions;

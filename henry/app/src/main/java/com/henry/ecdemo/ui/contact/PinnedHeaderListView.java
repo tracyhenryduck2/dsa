@@ -7,11 +7,6 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-/**
- * A ListView that maintains a header pinned at the top of the list. The
- * pinned header can be pushed up and dissolved as needed.
- * Created by Jorstin on 2015/3/19.
- */
 public class PinnedHeaderListView extends ListView {
 
     /**

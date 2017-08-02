@@ -1,8 +1,6 @@
 package com.henry.ecdemo.exception;
 
-/**
- * Created by luhuashan on 17/4/7.
- */
+
 public class ECDemoException extends Exception {
 
     public ECDemoException(){

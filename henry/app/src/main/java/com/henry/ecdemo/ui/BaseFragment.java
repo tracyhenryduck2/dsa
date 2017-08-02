@@ -1,15 +1,4 @@
-/*
- *  Copyright (c) 2015 The CCP project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a Beijing Speedtong Information Technology Co.,Ltd license
- *  that can be found in the LICENSE file in the root of the web site.
- *
- *   http://www.yuntongxun.com
- *
- *  An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */package com.henry.ecdemo.ui;
+package com.henry.ecdemo.ui;
 
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -19,10 +8,6 @@ import android.view.KeyEvent;
 import com.henry.ecdemo.common.AudioManagerTools;
 import com.henry.ecdemo.common.utils.LogUtil;
 
-/**
- * 自定义BaseFragment，处理上下音量键按下事件
- * Created by Jorstin on 2015/3/18.
- */
 public abstract class BaseFragment extends CCPFragment {
 
     /**当前CCPFragment所承载的FragmentActivity实例*/

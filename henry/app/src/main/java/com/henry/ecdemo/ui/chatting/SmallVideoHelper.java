@@ -7,9 +7,6 @@ import android.media.MediaMetadataRetriever;
 
 import java.util.HashMap;
 
-/**
- * Created by luhuashan on 17/2/8.
- */
 public class SmallVideoHelper {
 
 

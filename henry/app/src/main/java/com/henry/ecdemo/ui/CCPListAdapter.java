@@ -1,15 +1,4 @@
-/*
- *  Copyright (c) 2013 The CCP project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a Beijing Speedtong Information Technology Co.,Ltd license
- *  that can be found in the LICENSE file in the root of the web site.
- *
- *   http://www.yuntongxun.com
- *
- *  An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */package com.henry.ecdemo.ui;
+package com.henry.ecdemo.ui;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -24,7 +13,6 @@ import java.util.Map;
 
 /**
  * 定义抽象适配器，继承扩展不同的消息
- * Created by Jorstin on 2015/3/18.
  */
 public abstract class CCPListAdapter<T> extends BaseAdapter implements OnMessageChange {
 

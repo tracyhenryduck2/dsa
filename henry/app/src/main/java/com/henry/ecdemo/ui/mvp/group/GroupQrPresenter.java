@@ -5,9 +5,6 @@ import android.graphics.Bitmap;
 import com.google.zxing.WriterException;
 import com.henry.ecdemo.exception.ECEncoderQrException;
 
-/**
- * Created by luhuashan on 17/4/7.
- */
 public class GroupQrPresenter {
 
     private IGroupQrModel iGroupQrModel ;

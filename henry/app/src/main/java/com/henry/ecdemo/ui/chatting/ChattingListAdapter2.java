@@ -48,10 +48,6 @@ import com.yuntongxun.ecsdk.SdkErrorCode;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/4/8.
- */
 public class ChattingListAdapter2 extends CCPListAdapter<ECMessage> {
 
     protected View.OnClickListener mOnClickListener;

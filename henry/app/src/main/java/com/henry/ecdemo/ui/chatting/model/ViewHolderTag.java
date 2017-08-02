@@ -15,11 +15,7 @@ package com.henry.ecdemo.ui.chatting.model;
 
 import com.yuntongxun.ecsdk.ECMessage;
 
-/**
- * @author 容联•云通讯
- * @date 2014-12-9
- * @version 4.0
- */
+
 public class ViewHolderTag {
 
 	public int position;

@@ -8,10 +8,7 @@ import com.henry.ecdemo.R;
 import com.henry.ecdemo.ui.ActivityTransition;
 import com.henry.ecdemo.ui.ECSuperActivity;
 
-/**
- * com.henry.ecdemo.ui.group in ECDemo_Android
- * Created by Jorstin on 2015/4/2.
- */
+
 @ActivityTransition(2)
 public class BaseSearch extends ECSuperActivity implements View.OnClickListener{
 

@@ -12,10 +12,6 @@ import com.henry.ecdemo.ui.contact.ECContacts;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * com.henry.ecdemo.core in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 public class ContactsCache {
     // 初始化联系人
     public static final String ACTION_ACCOUT_INIT_CONTACTS = "com.henry.ecdemo.intent.ACCOUT_INIT_CONTACTS";

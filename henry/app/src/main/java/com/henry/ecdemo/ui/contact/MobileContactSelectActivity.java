@@ -29,14 +29,10 @@ import com.yuntongxun.ecsdk.im.ECGroup;
 
 import java.util.List;
 
-/**
- * com.henry.ecdemo.ui.contact in ECDemo_Android
- * Created by Jorstin on 2015/4/1.
- */
 public class MobileContactSelectActivity  extends ECSuperActivity implements
         View.OnClickListener  , ContactListFragment.OnContactClickListener, OnCreateGroupListener, OnSynsGroupMemberListener  {
     private ECProgressDialog mPostingdialog;
-    private static final String TAG = "ECSDK_Demo.ContactSelectListActivity";
+    private static final String TAG = "henry_dianying.ContactSelectListActivity";
     /**查看群组*/
     public static final int REQUEST_CODE_VIEW_GROUP_OWN = 0x2a;
     private TopBarView mTopBarView;

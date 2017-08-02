@@ -17,9 +17,6 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-/**
- * Created by luhuashan on 17/4/7.
- */
 public class GroupQRUI extends ECSuperActivity implements IGroupView, View.OnClickListener{
 
     private GroupQrPresenter presenter;

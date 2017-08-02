@@ -43,9 +43,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by luhuashan on 16/3/25.
- */
 public class SelectContactUI  extends ECSuperActivity implements View.OnClickListener {
     /**
      * The sub Activity implement, set the Ui Layout

@@ -7,10 +7,6 @@ import android.view.MotionEvent;
 
 import com.henry.ecdemo.common.utils.LogUtil;
 
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/3/31.
- */
 public class HackyViewPager extends ViewPager {
     private static final String TAG = "HackyViewPager";
 

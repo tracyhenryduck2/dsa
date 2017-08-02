@@ -2,9 +2,6 @@ package com.henry.ecdemo.core.comparator;
 
 import java.io.Serializable;
 
-/**
- * Created by luhuashan on 16/3/17.
- */
 public class ServerConfigBean implements Serializable{
 
 

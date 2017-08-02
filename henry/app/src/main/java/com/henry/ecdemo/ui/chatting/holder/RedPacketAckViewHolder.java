@@ -8,9 +8,7 @@ import android.widget.TextView;
 import com.henry.ecdemo.R;
 import com.henry.ecdemo.common.CCPAppManager;
 
-/**
- * Created by ustc on 2016/6/24.
- */
+
 public class RedPacketAckViewHolder extends BaseHolder {
 
     public View chattingContent;

@@ -35,9 +35,6 @@ import com.yuntongxun.ecsdk.SdkErrorCode;
 import java.io.InvalidClassException;
 import java.util.ArrayList;
 
-/**
- * Created by Jorstin on 2015/3/18.
- */
 public class LoginActivity extends ECSuperActivity implements
 		View.OnClickListener, OnLongClickListener {
 

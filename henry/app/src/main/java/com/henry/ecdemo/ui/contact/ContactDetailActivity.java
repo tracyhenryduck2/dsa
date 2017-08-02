@@ -1,15 +1,4 @@
-/*
- *  Copyright (c) 2015 The CCP project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a Beijing Speedtong Information Technology Co.,Ltd license
- *  that can be found in the LICENSE file in the root of the web site.
- *
- *   http://www.yuntongxun.com
- *
- *  An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */package com.henry.ecdemo.ui.contact;
+package com.henry.ecdemo.ui.contact;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,9 +14,6 @@ import com.henry.ecdemo.ui.ECSuperActivity;
 import com.henry.ecdemo.ui.SDKCoreHelper;
 import com.henry.ecdemo.ui.chatting.base.EmojiconTextView;
 
-/**
- * Created by Jorstin on 2015/3/18.
- */
 public class ContactDetailActivity extends ECSuperActivity implements View.OnClickListener{
 
     public final static String RAW_ID = "raw_id";

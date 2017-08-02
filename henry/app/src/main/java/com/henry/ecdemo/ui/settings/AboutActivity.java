@@ -31,7 +31,7 @@ public class AboutActivity extends ECSuperActivity implements View.OnClickListen
         getTopBarView().setTopBarToStatus(1, R.drawable.topbar_back_bt,
                 -1, null,
                 null,
-                getString(R.string.app_company), null, this);
+                getString(R.string.app_name), null, this);
 
 
 

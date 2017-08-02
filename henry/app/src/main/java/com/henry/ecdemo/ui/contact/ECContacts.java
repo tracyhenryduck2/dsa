@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 
 /**
  * 联系人信息
- * Created by Jorstin on 2015/3/18.
  */
 public class ECContacts  implements Parcelable {
 

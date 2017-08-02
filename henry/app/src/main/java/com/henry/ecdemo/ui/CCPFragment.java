@@ -1,15 +1,4 @@
-/*
- *  Copyright (c) 2013 The CCP project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a Beijing Speedtong Information Technology Co.,Ltd license
- *  that can be found in the LICENSE file in the root of the web site.
- *
- *   http://www.yuntongxun.com
- *
- *  An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */
+
 package com.henry.ecdemo.ui;
 
 import android.content.BroadcastReceiver;
@@ -32,12 +21,11 @@ import com.henry.ecdemo.common.view.SwipeBackLayout;
 import com.henry.ecdemo.common.view.TopBarView;
 
 /**
- * 应用页面View基类，每个View 必须要继承与该类并实现相应的方法
- * Created by Jorstin on 2015/3/18.
+ * 应用页面View基类，每个View 必须要继承与该类并实现相应的方法.
  */
 public abstract class CCPFragment extends Fragment{
 
-    private static final String TAG = "ECSDK_Demo.CCPFragment";
+    private static final String TAG = "henry_dianying.CCPFragment";
 
     /**广播拦截器*/
     private InternalReceiver internalReceiver;

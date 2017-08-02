@@ -11,7 +11,7 @@ import java.io.File;
 
 public class ExportImgUtil {
 
-    private static final String TAG = "ECSDK_Demo.ExportImgUtil";
+    private static final String TAG = "henry_dianying.ExportImgUtil";
     public static void refreshingMediaScanner(Context context , String pathName) {
         if(TextUtils.isEmpty(pathName)) {
             return ;

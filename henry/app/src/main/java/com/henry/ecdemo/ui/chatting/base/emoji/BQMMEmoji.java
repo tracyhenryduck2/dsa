@@ -1,8 +1,6 @@
 package com.henry.ecdemo.ui.chatting.base.emoji;
 
-/**
- * Created by fantasy on 16/6/23.
- */
+
 public class BQMMEmoji {
 
     private int code;

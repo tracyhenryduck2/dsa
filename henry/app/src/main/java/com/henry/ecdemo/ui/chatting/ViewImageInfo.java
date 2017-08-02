@@ -6,10 +6,6 @@ import android.os.Parcelable;
 
 import com.henry.ecdemo.storage.ImgInfoSqlManager;
 
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/4/17.
- */
 public class ViewImageInfo implements Parcelable {
 
 

@@ -14,10 +14,6 @@ import android.widget.TextView;
 
 import com.henry.ecdemo.R;
 
-/**
- * com.henry.ecdemo.ui.contact in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 public class BladeView extends View {
     private OnItemClickListener mOnItemClickListener;
     String[] b = {"↑" ,"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",

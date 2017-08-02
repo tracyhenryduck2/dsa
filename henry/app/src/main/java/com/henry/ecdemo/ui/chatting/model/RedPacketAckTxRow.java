@@ -16,9 +16,6 @@ import com.yuntongxun.ecsdk.ECMessage;
 
 import utils.RedPacketConstant;
 
-/**
- * Created by ustc on 2016/6/24.
- */
 public class RedPacketAckTxRow extends BaseChattingRow {
 
     public RedPacketAckTxRow(int type) {

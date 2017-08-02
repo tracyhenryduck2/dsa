@@ -11,7 +11,7 @@ import com.henry.ecdemo.common.CCPAppManager;
  */
 public class SupportSwipeModeUtils {
 
-    private static final String TAG = "ECSDK_Demo.SupportSwipeModeUtils";
+    private static final String TAG = "henry_dianying.SupportSwipeModeUtils";
 
     private static int mode = 0;
 

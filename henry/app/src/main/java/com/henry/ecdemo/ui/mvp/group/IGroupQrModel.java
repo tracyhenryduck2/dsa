@@ -4,9 +4,6 @@ import android.graphics.Bitmap;
 
 import com.google.zxing.WriterException;
 
-/**
- * Created by luhuashan on 17/4/7.
- */
 public interface IGroupQrModel{
 
 

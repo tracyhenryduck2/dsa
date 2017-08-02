@@ -10,10 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * com.henry.ecdemo.core in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 public class ECArrayLists<E> extends ArrayList<E> {
 
     /**

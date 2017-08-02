@@ -11,7 +11,7 @@ import java.lang.reflect.Proxy;
 
 public class SwipTranslucentMethodUtils {
 
-    private static final String TAG = "ECSDK_Demo.SwipTranslucentMethodUtils";
+    private static final String TAG = "henry_dianying.SwipTranslucentMethodUtils";
     private SwipTranslucentMethodUtils() {
     }
 

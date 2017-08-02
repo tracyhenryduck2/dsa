@@ -22,7 +22,7 @@ import com.henry.ecdemo.common.utils.LogUtil;
  */
 public class SuperListView extends ListView {
 
-    private static final String TAG = "ECSDK_Demo.SuperListView";
+    private static final String TAG = "henry_dianying.SuperListView";
     private static final int MSG_WAHT = 0x64;
     private boolean mDrawingCache;
     private boolean mChildrenDrawingCache;

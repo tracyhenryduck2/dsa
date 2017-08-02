@@ -13,11 +13,6 @@ import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 
-/**
- * 右侧的索引条
- * com.henry.ecdemo.ui.contact in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 public class IndexScroller {
     private float mIndexbarWidth; // 索引条宽度
     private float mIndexbarMargin; // 索引条外边距

@@ -27,7 +27,6 @@ import java.util.List;
 
 /**
  * 通讯录界面
- * Created by Jorstin on 2015/3/18.
  */
 public class ContactListFragment extends TabFragment {
 

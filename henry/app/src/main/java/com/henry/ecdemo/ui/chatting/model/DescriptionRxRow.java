@@ -34,15 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-/**
- * <p>Title: DescriptionRxRow.java</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2014</p>
- * <p>Company: Beijing Speedtong Information Technology Co.,Ltd</p>
- * @author Jorstin Chan
- * @date 2014-4-17
- * @version 1.0
- */
 public class DescriptionRxRow extends BaseChattingRow {
 
 	

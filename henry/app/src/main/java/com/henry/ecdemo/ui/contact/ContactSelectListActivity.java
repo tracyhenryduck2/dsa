@@ -27,12 +27,11 @@ import java.util.List;
 
 /**
  * 联系人选择页面
- * Created by Jorstin on 2015/3/18.
  */
 public class ContactSelectListActivity  extends ECSuperActivity implements
         View.OnClickListener  , ContactListFragment.OnContactClickListener {
     private ECProgressDialog mPostingdialog;
-    private static final String TAG = "ECSDK_Demo.ContactSelectListActivity";
+    private static final String TAG = "henry_dianying.ContactSelectListActivity";
     /**查看群组*/
     public static final int REQUEST_CODE_VIEW_GROUP_OWN = 0x2a;
     private TopBarView mTopBarView;

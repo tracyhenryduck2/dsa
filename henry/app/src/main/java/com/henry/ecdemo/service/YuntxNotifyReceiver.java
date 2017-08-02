@@ -137,7 +137,7 @@ public class YuntxNotifyReceiver extends ECNotifyReceiver {
 
     @Override
     public void onNotificationClicked(Context context, int notifyType, String sender) {
-        LogUtil.d("ECSDK_Demo.YuntxNotifyReceiver", "onNotificationClicked notifyType " + notifyType + " ,sender " + sender);
+        LogUtil.d("henry_dianying.YuntxNotifyReceiver", "onNotificationClicked notifyType " + notifyType + " ,sender " + sender);
         Intent intent = new Intent(context, LauncherActivity.class);
         intent.putExtra("Main_Session", sender);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -162,7 +162,7 @@ public class YuntxNotifyReceiver extends ECNotifyReceiver {
     }
 
     public static class NotifyService extends Service {
-        public static final String TAG = "ECSDK_Demo.NotifyService";
+        public static final String TAG = "henry_dianying.NotifyService";
         @Override
         public IBinder onBind(Intent intent) {
             return null;

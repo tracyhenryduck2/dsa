@@ -9,9 +9,6 @@ import com.henry.ecdemo.R;
 import com.henry.ecdemo.common.CCPAppManager;
 import com.henry.ecdemo.ui.ECSuperActivity;
 
-/**
- * Created by luhuashan on 16/7/29.
- */
 public class SuggestActivity extends ECSuperActivity implements View.OnClickListener{
     @Override
     protected int getLayoutId() {

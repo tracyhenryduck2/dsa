@@ -34,19 +34,12 @@ import com.yuntongxun.ecsdk.SdkErrorCode;
 
 import java.io.InvalidClassException;
 
-//import com.yuntongxun.ecsdk.ECConferenceManager;
-
-//import com.yuntongxun.ecsdk.ECConferenceManager;
-
-/**
- * Created by Jorstin on 2015/3/17.
- */
 public class SDKCoreHelper implements ECDevice.InitListener , ECDevice.OnECDeviceConnectListener,ECDevice.OnLogoutListener {
 
     public static final String TAG = "SDKCoreHelper";
-    public static final String ACTION_LOGOUT = "com.yuntongxun.ECDemo_logout";
-    public static final String ACTION_SDK_CONNECT = "com.yuntongxun.Intent_Action_SDK_CONNECT";
-    public static final String ACTION_KICK_OFF = "com.yuntongxun.Intent_ACTION_KICK_OFF";
+    public static final String ACTION_LOGOUT = "com.henry.Intent_Action_SDK_LOGOUT";
+    public static final String ACTION_SDK_CONNECT = "com.henry.Intent_Action_SDK_CONNECT";
+    public static final String ACTION_KICK_OFF = "com.henry.Intent_ACTION_KICK_OFF";
     private static SDKCoreHelper sInstance;
     private Context mContext;
     private ECDevice.ECConnectState mConnect = ECDevice.ECConnectState.CONNECT_FAILED;

@@ -27,7 +27,7 @@ import com.yuntongxun.ecsdk.platformtools.ECHandlerHelper;
 
 public class SwipeBackLayout extends FrameLayout {
 
-    private static final String TAG = "ECSDK_Demo.SwipeBackLayout";
+    private static final String TAG = "henry_dianying.SwipeBackLayout";
     /**
      * Minimum velocity that will be detected as a fling
      */
@@ -254,7 +254,7 @@ public class SwipeBackLayout extends FrameLayout {
     }
 
     private class ViewDragCallback extends ViewDragHelper.Callback implements MethodInvoke.OnSwipeInvokeResultListener {
-        private static final String TAG = "ECSDK_Demo.ViewDragCallback";
+        private static final String TAG = "henry_dianying.ViewDragCallback";
         private int mTemp = 0;
         private int mReleasedLeft = 0;
         private boolean mIsScrollOverValid;

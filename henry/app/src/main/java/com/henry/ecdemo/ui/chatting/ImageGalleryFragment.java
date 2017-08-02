@@ -41,11 +41,6 @@ import com.yuntongxun.ecsdk.ECMessage.Direction;
 import com.yuntongxun.ecsdk.SdkErrorCode;
 
 import java.io.File;
-
-/**
- * com.henry.ecdemo.ui.chatting in ECDemo_Android
- * Created by Jorstin on 2015/3/30.
- */
 public class ImageGalleryFragment extends CCPFragment {
 
     private static final String TAG = "ImageGalleryFragment";

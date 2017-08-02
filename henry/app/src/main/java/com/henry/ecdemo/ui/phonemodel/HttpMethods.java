@@ -10,8 +10,6 @@ import org.json.JSONObject;
 import io.reactivex.Observer;
 import okhttp3.RequestBody;
 import retrofit2.Retrofit;
-//import rx.Subscriber;
-//import rx.schedulers.Schedulers;
 
 public class HttpMethods{
 

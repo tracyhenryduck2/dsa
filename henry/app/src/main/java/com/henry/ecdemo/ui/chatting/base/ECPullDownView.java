@@ -13,10 +13,6 @@ import android.widget.Scroller;
 
 import com.henry.ecdemo.R;
 
-/**
- * com.henry.ecdemo.ui.chatting.base in ECDemo_Android
- * Created by Jorstin on 2015/4/17.
- */
 public class ECPullDownView  extends FrameLayout implements GestureDetector.OnGestureListener {
 
 

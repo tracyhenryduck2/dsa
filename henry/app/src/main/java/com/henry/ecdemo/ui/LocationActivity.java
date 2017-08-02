@@ -35,11 +35,6 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.henry.ecdemo.R;
 import com.henry.ecdemo.ui.chatting.ChattingActivity;
 
-/**
- * 
- * @author luhuashan 定位界面
- *
- */
 public class LocationActivity extends ECSuperActivity implements
 		OnGetGeoCoderResultListener, OnClickListener {
 

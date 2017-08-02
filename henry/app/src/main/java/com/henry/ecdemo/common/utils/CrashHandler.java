@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 public class CrashHandler  implements Thread.UncaughtExceptionHandler {
 
-    private final static String TAG = "ECSDK_Demo.UncaughtException";
+    private final static String TAG = "henry_dianying.UncaughtException";
     /** CrashHandler实例 */
     private static CrashHandler ourInstance = new CrashHandler();
     /** 获取CrashHandler实例 ,单例模式 */

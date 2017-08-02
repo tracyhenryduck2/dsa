@@ -30,13 +30,6 @@ import org.json.JSONObject;
 
 import java.util.Set;
 
-
-//import com.yuntongxun.ecsdk.OnConferenceListener;
-//import com.yuntongxun.ecsdk.conference.ECConferenceNotification;
-
-/**
- * Created by Jorstin on 2015/3/17.
- */
 @ActivityTransition(0)
 public abstract class ECSuperActivity extends ECFragmentActivity implements GestureDetector.OnGestureListener {
 

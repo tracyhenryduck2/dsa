@@ -2,10 +2,6 @@ package com.henry.ecdemo.core;
 
 import com.henry.ecdemo.common.utils.DemoUtils;
 
-/**
- * com.henry.ecdemo.core in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 public class Phone {
 
     /**

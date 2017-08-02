@@ -22,8 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 2、为了修改本demo为使用你自己的appid，你需要修改几个地方：DemoApplication.java中的APP_ID,
  * APP_KEY，AndroidManifest
  * .xml中的packagename，和权限permission.MIPUSH_RECEIVE的前缀为你的packagename。
- * 
- * @author wangkuiwei
  */
 public class MainActivity extends ECSuperActivity implements OnClickListener {
 

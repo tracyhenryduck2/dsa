@@ -1,15 +1,4 @@
-/*
- *  Copyright (c) 2013 The CCP project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a Beijing Speedtong Information Technology Co.,Ltd license
- *  that can be found in the LICENSE file in the root of the web site.
- *
- *   http://www.yuntongxun.com
- *
- *  An additional intellectual property rights grant can be found
- *  in the file PATENTS.  All contributing project authors may
- *  be found in the AUTHORS file in the root of the source tree.
- */
+
 package com.henry.ecdemo.ui.chatting;
 
 
@@ -29,15 +18,10 @@ import com.henry.ecdemo.ui.ECFragmentActivity;
 import com.henry.ecdemo.ui.SDKCoreHelper;
 import com.henry.ecdemo.ui.chatting.view.CCPChattingFooter2;
 
-/**
- * @author 容联•云通讯
- * @date 2014-12-9
- * @version 4.0
- */
 public class ChattingActivity extends ECFragmentActivity implements
 		ChattingFragment.OnChattingAttachListener {
 
-	private static final String TAG = "ECSDK_Demo.ChattingActivity";
+	private static final String TAG = "henry_dianying.ChattingActivity";
 	public ChattingFragment mChattingFragment;
 	private MyReceiver myReceiver;
 

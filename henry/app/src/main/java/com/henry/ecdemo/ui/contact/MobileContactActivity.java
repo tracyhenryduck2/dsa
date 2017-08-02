@@ -33,9 +33,6 @@ import com.henry.ecdemo.ui.TabFragment;
 import com.henry.ecdemo.ui.chatting.base.EmojiconTextView;
 import com.henry.ecdemo.ui.settings.EditConfigureActivity;
 
-/**
- * Created by Jorstin on 2015/3/20.
- */
 public class MobileContactActivity extends ECSuperActivity implements View.OnClickListener{
 
 

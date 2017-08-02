@@ -1,9 +1,5 @@
 package com.henry.ecdemo.core.comparator;
 
-/**
- * com.henry.ecdemo.core.comparator in ECDemo_Android
- * Created by Jorstin on 2015/3/21.
- */
 
 import com.henry.ecdemo.ui.contact.ECContacts;
 
@@ -12,8 +8,6 @@ import java.util.Comparator;
 
 /**
  * 用于按拼音排序的比较器
- *
- * @author zhangyp
  */
 public class PyComparator implements Comparator<ECContacts>, Serializable {
     /**

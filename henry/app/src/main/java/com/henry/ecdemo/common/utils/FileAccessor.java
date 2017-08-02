@@ -18,15 +18,15 @@ public class FileAccessor {
 
     public static final String TAG = FileAccessor.class.getName();
     public static String EXTERNAL_STOREPATH = getExternalStorePath();
-    public static final String APPS_ROOT_DIR = getExternalStorePath() + "/ECSDK_Demo";
-    public static final String EXPORT_DIR = getExternalStorePath() + "/ECSDK_Demo/ECDemo_IM";
-    public static final String CAMERA_PATH = getExternalStorePath() + "/DCIM/ECSDK_Demo";
-    public static final String TACK_PIC_PATH = getExternalStorePath()+ "/ECSDK_Demo/.tempchat";
-    public static final String IMESSAGE_VOICE = getExternalStorePath() + "/ECSDK_Demo/voice";
-    public static final String IMESSAGE_IMAGE = getExternalStorePath() + "/ECSDK_Demo/image";
-    public static final String IMESSAGE_AVATAR = getExternalStorePath() + "/ECSDK_Demo/avatar";
-    public static final String IMESSAGE_FILE = getExternalStorePath() + "/ECSDK_Demo/file";
-    public static final String IMESSAGE_RICH_TEXT = getExternalStorePath() + "/ECSDK_Demo/richtext";
+    public static final String APPS_ROOT_DIR = getExternalStorePath() + "/henry_dianying";
+    public static final String EXPORT_DIR = getExternalStorePath() + "/henry_dianying/ECDemo_IM";
+    public static final String CAMERA_PATH = getExternalStorePath() + "/DCIM/henry_dianying";
+    public static final String TACK_PIC_PATH = getExternalStorePath()+ "/henry_dianying/.tempchat";
+    public static final String IMESSAGE_VOICE = getExternalStorePath() + "/henry_dianying/voice";
+    public static final String IMESSAGE_IMAGE = getExternalStorePath() + "/henry_dianying/image";
+    public static final String IMESSAGE_AVATAR = getExternalStorePath() + "/henry_dianying/avatar";
+    public static final String IMESSAGE_FILE = getExternalStorePath() + "/henry_dianying/file";
+    public static final String IMESSAGE_RICH_TEXT = getExternalStorePath() + "/henry_dianying/richtext";
     public static final String LOCAL_PATH = APPS_ROOT_DIR + "/config.txt";
 
 
@@ -280,11 +280,7 @@ public class FileAccessor {
         }
     }
 
-    /**
-     * /data/data/com.ECSDK_Demo.bluetooth/files
-     *
-     * @return
-     */
+
     public static String getAppContextPath() {
         return ECApplication.getInstance().getFilesDir().getAbsolutePath();
     }
@@ -354,7 +350,7 @@ public class FileAccessor {
     }
 
     public static File getTackPicFilePath() {
-        File localFile = new File(getExternalStorePath()+ "/ECSDK_Demo/.tempchat" , "temp.jpg");
+        File localFile = new File(getExternalStorePath()+ "/henry_dianying/.tempchat" , "temp.jpg");
         if ((!localFile.getParentFile().exists())
                 && (!localFile.getParentFile().mkdirs())) {
             LogUtil.e("hhe", "SD卡不存在");

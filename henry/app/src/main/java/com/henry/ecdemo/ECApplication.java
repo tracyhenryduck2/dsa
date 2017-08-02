@@ -18,6 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 //import com.squareup.leakcanary.LeakCanary;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.xiaomi.mipush.sdk.MiPushClient;
 import com.henry.ecdemo.common.CCPAppManager;
 import com.henry.ecdemo.common.utils.ECPreferenceSettings;
@@ -31,9 +32,6 @@ import java.io.File;
 import java.io.InvalidClassException;
 import java.util.List;
 
-/**
- * Created by Jorstin on 2015/3/17.
- */
 public class ECApplication extends Application {
 
     public static final String TAG = "ECApplication";
@@ -85,7 +83,7 @@ public class ECApplication extends Application {
 
 //        CrashHandler.getInstance().init(this);
         SDKInitializer.initialize(instance);
-//        CrashReport.initCrashReport(getApplicationContext(), "900050687", true);
+        CrashReport.initCrashReport(getApplicationContext(), "900050687", true);
 
         MultiDex.install(this);
 
@@ -183,7 +181,7 @@ public class ECApplication extends Application {
     }
 
     private void initImageLoader() {
-        File cacheDir = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "ECSDK_Demo/image");
+        File cacheDir = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "henry_dianying/image");
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(this)
                 .threadPoolSize(1)//线程池内加载的数量

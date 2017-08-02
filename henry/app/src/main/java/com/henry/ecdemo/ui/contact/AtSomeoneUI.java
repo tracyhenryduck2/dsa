@@ -22,10 +22,6 @@ import com.henry.ecdemo.ui.chatting.base.EmojiconTextView;
 import com.henry.ecdemo.ui.group.GroupMemberService;
 import com.yuntongxun.ecsdk.im.ECGroupMember;
 
-/**
- * com.henry.ecdemo.ui.contact in ECDemo_Android Created by Jorstin on
- * 2015/6/15.
- */
 public class AtSomeoneUI extends ECSuperActivity implements
 		View.OnClickListener, GroupMemberService.OnSynsGroupMemberListener {
 
