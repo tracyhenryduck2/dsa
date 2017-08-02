@@ -1,0 +1,94 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+android {
+
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
+
+    compileSdkVersion 16
+    buildToolsVersion '23.0.3'
+    defaultConfig {
+        applicationId "com.henry.dianying"
+        minSdkVersion 14
+//        targetSdkVersion 17
+//        minSdkVersion 16
+//        targetSdkVersion 23
+        versionCode 18
+        versionName "5.3.2r"
+        multiDexEnabled true
+
+        ndk {
+            abiFilters 'armeabi'
+        }
+
+
+
+        sourceSets {
+            main {
+                jniLibs.srcDirs = ['libs']
+                java.srcDirs = ['src/main/java']
+            }
+        }
+    }
+
+    def retrofitVersion = '2.1.0'
+
+    dependencies {
+        compile fileTree(dir: 'libs', include: ['*.jar'])
+        compile 'com.android.support:appcompat-v7:20.0.0'
+        compile 'com.squareup.okhttp3:okhttp:3.2.0'
+        compile 'com.squareup.okio:okio:1.7.0'
+        compile files('libs/pinyin4j-2.5.0.jar')
+        compile files('libs/universal-image-loader-1.9.3.jar')
+        compile files('libs/BaiduLBS_Android.jar')
+        compile files('libs/bugly_crash_release.jar')
+        compile files('libs/locSDK_6.13.jar')
+        compile files('libs/jsoup-1.7.1.jar')
+        compile files('libs/adapter-rxjava2-2.3.0.jar')
+        compile files('libs/core-3.1.0.jar')
+        compile files('libs/HwPush_SDK_NOMAP_V2705.jar')
+        compile files('MiPush_SDK_Client_2_2_21.jar')
+        compile files('libs/rxandroid-2.0.1-sources.jar')
+        compile files('libs/YTX_Android_IM_SDK_v5.3.2r.jar')
+
+        compile project(':vitamio')
+
+        compile 'org.greenrobot:eventbus:3.0.0'
+
+        compile project(':BQMM_Lib')
+        compile project(':rxandroid')
+        compile project(':redpacketlibrary')
+        compile 'com.android.support:multidex:1.0.0'
+
+        compile('com.alibaba.android:vlayout:1.0.5@aar') {
+
+            transitive = true
+        }
+
+        compile 'com.jakewharton:butterknife:8.4.0'
+        apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+
+        compile 'com.squareup.retrofit2:retrofit:2.3.0'
+
+        compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+        compile 'com.squareup.okhttp3:logging-interceptor:3.1.2'
+
+
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+dependencies {
+}
