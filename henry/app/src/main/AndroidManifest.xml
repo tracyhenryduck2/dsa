@@ -111,7 +111,7 @@
 
         <!-- Demo主程序路口 -->
         <activity
-            android:name="com.henry.ecdemo.ui.LauncherActivity"
+            android:name="com.henry.ecdemo.ui.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -212,6 +212,10 @@
         <!-- 文件浏览器 -->
         <activity
             android:name="com.henry.ecdemo.ui.plugin.FileExplorerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <activity
+            android:name="com.henry.ecdemo.ui.LauncherActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <!-- 群组 -->
         <activity
