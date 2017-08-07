@@ -17,7 +17,7 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_centerHorizontal="true"
-       android:layout_marginTop="70dp"
+       android:layout_marginTop="55dp"
        android:id="@+id/lv2"
        android:src="@drawable/lv2"/>
 
@@ -35,7 +35,7 @@
        android:layout_height="wrap_content"
        android:layout_below="@id/lv2"
        android:layout_alignLeft="@id/lv2"
-       android:layout_marginTop="6dp"
+       android:layout_marginTop="0dp"
        android:layout_marginLeft="13dp"
        android:id="@+id/hong2"
        android:src="@drawable/hong2"/>

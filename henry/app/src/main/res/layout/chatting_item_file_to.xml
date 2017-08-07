@@ -30,7 +30,8 @@
                 android:layout_gravity="center_vertical"
                 android:id="@+id/tv_read_unread"
                 android:textColor="@color/black"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/chatting_state_iv"

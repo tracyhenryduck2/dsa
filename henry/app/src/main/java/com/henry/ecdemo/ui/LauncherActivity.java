@@ -1,6 +1,8 @@
 
 package com.henry.ecdemo.ui;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +10,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -17,7 +23,16 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.henry.ecdemo.ECApplication;
 import com.henry.ecdemo.R;
@@ -29,6 +44,7 @@ import com.henry.ecdemo.common.base.OverflowAdapter;
 import com.henry.ecdemo.common.base.OverflowAdapter.OverflowItem;
 import com.henry.ecdemo.common.base.OverflowHelper;
 import com.henry.ecdemo.common.dialog.ECAlertDialog;
+import com.henry.ecdemo.common.dialog.ECListDialog;
 import com.henry.ecdemo.common.dialog.ECProgressDialog;
 import com.henry.ecdemo.common.utils.CrashHandler;
 import com.henry.ecdemo.common.utils.DemoUtils;
@@ -36,6 +52,8 @@ import com.henry.ecdemo.common.utils.ECNotificationManager;
 import com.henry.ecdemo.common.utils.ECPreferenceSettings;
 import com.henry.ecdemo.common.utils.ECPreferences;
 import com.henry.ecdemo.common.utils.LogUtil;
+import com.henry.ecdemo.common.utils.ToastUtil;
+import com.henry.ecdemo.common.view.NetWarnBannerView;
 import com.henry.ecdemo.core.ClientUser;
 import com.henry.ecdemo.core.ContactsCache;
 import com.henry.ecdemo.storage.ContactSqlManager;
@@ -47,6 +65,7 @@ import com.henry.ecdemo.ui.account.LoginActivity;
 import com.henry.ecdemo.ui.chatting.ChattingActivity;
 import com.henry.ecdemo.ui.chatting.CustomerServiceHelper;
 import com.henry.ecdemo.ui.chatting.IMChattingHelper;
+import com.henry.ecdemo.ui.chatting.model.Conversation;
 import com.henry.ecdemo.ui.contact.ContactLogic;
 import com.henry.ecdemo.ui.contact.ECContacts;
 import com.henry.ecdemo.ui.contact.MobileContactActivity;
@@ -55,6 +74,7 @@ import com.henry.ecdemo.ui.group.BaseSearch;
 import com.henry.ecdemo.ui.group.CreateGroupActivity;
 import com.henry.ecdemo.ui.group.ECDiscussionActivity;
 import com.henry.ecdemo.ui.group.GroupNoticeActivity;
+import com.henry.ecdemo.ui.group.GroupService;
 import com.henry.ecdemo.ui.phonemodel.PhoneRouterUI;
 import com.henry.ecdemo.ui.settings.SettingPersionInfoActivity;
 import com.henry.ecdemo.ui.settings.SettingsActivity;
@@ -63,6 +83,7 @@ import com.yuntongxun.ecsdk.ECDevice;
 import com.yuntongxun.ecsdk.ECError;
 import com.yuntongxun.ecsdk.SdkErrorCode;
 import com.yuntongxun.ecsdk.im.ECGroup;
+import com.yuntongxun.ecsdk.im.ECGroupOption;
 import com.yuntongxun.ecsdk.platformtools.ECHandlerHelper;
 
 import java.io.InvalidClassException;
@@ -74,9 +95,7 @@ import java.util.List;
  * 主界面（消息会话界面、联系人界面、群组界面）
  */
 @ActivityTransition(3)
-public class LauncherActivity extends ECFragmentActivity implements
-		View.OnClickListener, View.OnLongClickListener ,
-		ConversationListFragment.OnUpdateMsgUnreadCountsListener {
+public class LauncherActivity extends ECFragmentActivity implements CCPListAdapter.OnListAdapterCallBackListener {
 
 	private static final String TAG = "LauncherActivity";
 	/**
@@ -84,89 +103,35 @@ public class LauncherActivity extends ECFragmentActivity implements
 	 */
 	public static LauncherActivity mLauncherUI;
 
-	/**
-	 * 当前ECLauncherUI实例产生个数
-	 */
-	public static int mLauncherInstanceCount = 0;
+	private InternalReceiver internalReceiver;
 
-	/**
-	 * 当前主界面RootView
-	 */
-	public View mLauncherView;
-
-	/**
-	 * LauncherUI 主界面导航控制View ,包含三个View Tab按钮
-	 */
-	private CCPLauncherUITabView mLauncherUITabView;
-	/**
-	 * 三个TabView所对应的三个页面的适配器
-	 */
-	private CCPCustomViewPager mCustomViewPager;
-
-	/**
-	 * 沟通、联系人、群组适配器
-	 */
-	public LauncherViewPagerAdapter mLauncherViewPagerAdapter;
 
 	private OverflowHelper mOverflowHelper;
 
-	/**
-	 * 当前显示的TabView Fragment
-	 */
-	private int mCurrentItemPosition = -1;
-
-	/**
-	 * 会话界面(沟通)
-	 */
-	private static final int TAB_CONVERSATION = 0;
-
-	/**
-	 * 通讯录界面(联系人)
-	 */
-	private static final int TAB_ADDRESS = 1;
-
-	/**
-	 * 群组界面
-	 */
-	private static final int TAB_GROUP = 2;
-	private static final int TAB_DISCUSSION_GROUP = 3;
-
-	/**
-	 * {@link CCPLauncherUITabView} 是否已经被初始化
-	 */
-	private boolean mTabViewInit = false;
-
-	/**
-	 * 缓存三个TabView
-	 */
-	private final HashMap<Integer, Fragment> mTabViewCache = new HashMap<Integer, Fragment>();
 	private OverflowAdapter.OverflowItem[] mItems;
+	private ImageView imageView_lv2,imageView_lv,imageView_hong,imageView_hong2,imageView_huang,imageView_cheng;
+	private ImageView imageView_zi,imageView_you_and_me;
+	private AnimationSet set,set2,set3,set4,set5,set6,set_zi,set_you;
 
+	/**会话消息列表ListView*/
+	private ListView mListView;
+	private NetWarnBannerView mBannerView;
+	private ConversationAdapter mAdapter;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		int pid = android.os.Process.myPid();
 
 		Intent intentGroup =new Intent();
 		intentGroup.setAction("com.henry.ecdemo.inited");
 		sendBroadcast(intentGroup);
-
-
-
-//		LogUtil.e(Build.BOARD);xe1102h
 		if (mLauncherUI != null) {
 			LogUtil.i(LogUtil.getLogUtilsTag(LauncherActivity.class),
 					"finish last LauncherUI");
 			mLauncherUI.finish();
 		}
-//		CCPAppManager.addActivityUI(mLauncherUI);
 		mLauncherUI = this;
-		mLauncherInstanceCount++;
 		super.onCreate(savedInstanceState);
 		initWelcome();
 		mOverflowHelper = new OverflowHelper(this);
-		// umeng
-//		MobclickAgent.updateOnlineConfig(this);
-//		MobclickAgent.setDebugMode(true);
 		// 设置页面默认为竖屏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		ECContentObservers.getInstance().initContentObserver();
@@ -195,11 +160,18 @@ public class LauncherActivity extends ECFragmentActivity implements
 
 		if (!mInit) {
 			mInit = true;
-			setContentView(R.layout.splash_activity);
+			setContentView(R.layout.activity_splash);
+			initView();
+			initAnimation();
+			initAnimation2();
+			initAnimation3();
+			initAnimation4();
+			initAnimation5();
+			initAnimation6();
+			initAnimationzi();
+			initAnimationyou();
+			handler.sendEmptyMessageDelayed(1,0);
 
-
-			// 程序启动开始创建一个splash用来初始化程序基本数据
-			ECHandlerHelper.postDelayedRunnOnUI(initRunnable, 3000);
 		}
 	}
 
@@ -207,28 +179,35 @@ public class LauncherActivity extends ECFragmentActivity implements
 	 * 初始化主界面UI视图
 	 */
 	private void initLauncherUIView() {
-		mLauncherView = getLayoutInflater().inflate(R.layout.main_tab, null);
-		setContentView(mLauncherView);
+		setContentView(getLayoutInflater().inflate(R.layout.main_tab, null));
+		if(mListView != null) {
+			mListView.setAdapter(null);
 
-		mTabViewInit = true;
-		mCustomViewPager = (CCPCustomViewPager) findViewById(R.id.pager);
-		mCustomViewPager.setOffscreenPageLimit(4);
-
-		if (mLauncherUITabView != null) {
-			mLauncherUITabView.setOnUITabViewClickListener(null);
-			mLauncherUITabView.setVisibility(View.VISIBLE);
+			if(mBannerView != null) {
+				mListView.removeHeaderView(mBannerView);
+			}
 		}
-		mLauncherUITabView = (CCPLauncherUITabView) findViewById(R.id.laucher_tab_top);
-		mCustomViewPager.setSlideEnabled(true);
-		mLauncherViewPagerAdapter = new LauncherViewPagerAdapter(this,
-				mCustomViewPager);
-		mLauncherUITabView
-				.setOnUITabViewClickListener(mLauncherViewPagerAdapter);
 
-		findViewById(R.id.btn_plus).setOnClickListener(this);
-		findViewById(R.id.btn_plus).setOnLongClickListener(this);
-		ctrlViewTab(0);
+		mListView = (ListView) findViewById(R.id.main_chatting_lv);
+		View mEmptyView = findViewById(R.id.empty_conversation_tv);
+		mListView.setEmptyView(mEmptyView);
+		mListView.setDrawingCacheEnabled(false);
+		mListView.setScrollingCacheEnabled(false);
 
+		mListView.setOnItemLongClickListener(mOnLongClickListener);
+		mListView.setOnItemClickListener(mItemClickListener);
+		mBannerView = new NetWarnBannerView(this);
+		mBannerView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				reTryConnect();
+			}
+		});
+		mListView.addHeaderView(mBannerView);
+		mAdapter = new ConversationAdapter(this , this);
+		mListView.setAdapter(mAdapter);
+
+		registerForContextMenu(mListView);
 		Intent intent = getIntent();
 		if (intent != null && intent.getIntExtra("launcher_from", -1) == 1) {
 			// 检测从登陆界面过来，判断是不是第一次安装使用
@@ -237,6 +216,15 @@ public class LauncherActivity extends ECFragmentActivity implements
 
 		// 如果是登陆过来的
 		doInitAction();
+
+		try {
+			updateConnectState();
+			IMessageSqlManager.registerMsgObserver(mAdapter);
+			mAdapter.notifyChange();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}
 
 	private void settingPersonInfo(){//selftest
@@ -311,91 +299,6 @@ public class LauncherActivity extends ECFragmentActivity implements
 			}
 		}
 	}
-
-	/**
-	 * 根据TabFragment Index 查找Fragment
-	 *
-	 * @param tabIndex
-	 * @return
-	 */
-	public final BaseFragment getTabView(int tabIndex) {
-		LogUtil.d(LogUtil.getLogUtilsTag(LauncherActivity.class),
-				"get tab index " + tabIndex);
-		if (tabIndex < 0) {
-			return null;
-		}
-
-		if (mTabViewCache.containsKey(Integer.valueOf(tabIndex))) {
-			return (BaseFragment) mTabViewCache.get(Integer.valueOf(tabIndex));
-		}
-
-		BaseFragment mFragment = null;
-		switch (tabIndex) {
-		case TAB_CONVERSATION:
-			mFragment = (TabFragment) Fragment.instantiate(this,
-					ConversationListFragment.class.getName(), null);
-			break;
-		case TAB_ADDRESS:
-			mFragment = (TabFragment) Fragment
-					.instantiate(this,
-							MobileContactActivity.MobileContactFragment.class
-									.getName(), null);
-			break;
-		case TAB_GROUP:
-			
-			
-			mFragment = (TabFragment) Fragment.instantiate(this,
-					GroupListFragment.class.getName(), null);
-			break;
-		case TAB_DISCUSSION_GROUP:
-			
-			mFragment = (TabFragment) Fragment.instantiate(this,
-					DiscussionListFragment.class.getName(), null);
-			break;
-
-		default:
-			break;
-		}
-
-		if (mFragment != null) {
-			mFragment.setActionBarActivity(this);
-		}
-		mTabViewCache.put(Integer.valueOf(tabIndex), mFragment);
-		return mFragment;
-	}
-
-	/**
-	 * 根据提供的子Fragment index 切换到对应的页面
-	 *
-	 * @param index
-	 *            子Fragment对应的index
-	 */
-	public void ctrlViewTab(int index) {
-
-		LogUtil.d(LogUtil.getLogUtilsTag(LauncherActivity.class),
-				"change tab to " + index + ", cur tab " + mCurrentItemPosition
-						+ ", has init tab " + mTabViewInit
-						+ ", tab cache size " + mTabViewCache.size());
-		if ((!mTabViewInit || index < 0)
-				|| (mLauncherViewPagerAdapter != null && index > mLauncherViewPagerAdapter
-						.getCount() - 1)) {
-			return;
-		}
-
-		if (mCurrentItemPosition == index) {
-			return;
-		}
-		mCurrentItemPosition = index;
-
-		if (mLauncherUITabView != null) {
-			mLauncherUITabView.doChangeTabViewDisplay(mCurrentItemPosition);
-		}
-
-		if (mCustomViewPager != null) {
-			mCustomViewPager.setCurrentItem(mCurrentItemPosition, false);
-		}
-
-	}
 	/**
 	 * 根据底层库是否支持voip加载相应的子菜单
 	 */
@@ -423,11 +326,6 @@ public class LauncherActivity extends ECFragmentActivity implements
 
 	}
 
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
-		controlPlusSubMenu();
-		return false;
-	}
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
@@ -508,14 +406,10 @@ public class LauncherActivity extends ECFragmentActivity implements
 				e.printStackTrace();
 			}
 		}
-		if (mLauncherUITabView == null) {
+
 			String account = getAutoRegistAccount();
 			if (TextUtils.isEmpty(account)) {
-				if(RestServerDefines.QR_APK){
-					startActivity(new Intent(this, PhoneRouterUI.class));
-				}else {
-					startActivity(new Intent(this, LoginActivity.class));
-				}
+				startActivity(new Intent(this, LoginActivity.class));
 				finish();
 				return;
 			}
@@ -524,7 +418,7 @@ public class LauncherActivity extends ECFragmentActivity implements
 			// 注册第一次登陆同步消息
 			registerReceiver(new String[] {
 					IMChattingHelper.INTENT_ACTION_SYNC_MESSAGE,
-					SDKCoreHelper.ACTION_SDK_CONNECT });
+					SDKCoreHelper.ACTION_SDK_CONNECT,GroupService.ACTION_SYNC_GROUP, IMessageSqlManager.ACTION_SESSION_DEL });
 			ClientUser user = new ClientUser("").from(account);
 
 		   ClientUser c =	 CCPAppManager.getClientUser();
@@ -552,9 +446,19 @@ public class LauncherActivity extends ECFragmentActivity implements
 			if (!mInit) {
 				initLauncherUIView();
 			}
-		}
-		OnUpdateMsgUnreadCounts();
+
+		//OnUpdateMsgUnreadCounts();
 		getTopContacts();
+
+		try {
+			updateConnectState();
+			IMessageSqlManager.registerMsgObserver(mAdapter);
+			mAdapter.notifyChange();
+		}catch (Exception e){
+            e.printStackTrace();
+		}
+
+
 	}
 
 	private void getTopContacts(){
@@ -625,32 +529,6 @@ public class LauncherActivity extends ECFragmentActivity implements
 		return registAccount;
 	}
 
-	private void controlPlusSubMenu() {
-		if (mOverflowHelper == null) {
-			return;
-		}
-
-		if (mOverflowHelper.isOverflowShowing()) {
-			mOverflowHelper.dismiss();
-			return;
-		}
-		
-		if(mItems == null) {
-			initOverflowItems();
-		}
-		
-		mOverflowHelper.setOverflowItems(mItems);
-		mOverflowHelper .setOnOverflowItemClickListener(mOverflowItemCliclListener);
-		mOverflowHelper.showAsDropDown(findViewById(R.id.btn_plus));
-	}
-
-	@Override
-	protected void onPause() {
-		LogUtil.d(LogUtil.getLogUtilsTag(getClass()), "KEVIN Launcher onPause");
-		super.onPause();
-		// 友盟统计API
-//		MobclickAgent.onPause(this);
-	}
 
 	/**
 	 * 返回隐藏到后台
@@ -660,174 +538,15 @@ public class LauncherActivity extends ECFragmentActivity implements
 
 	}
 
-	@Override
-	public void OnUpdateMsgUnreadCounts() {
-		int unreadCount = IMessageSqlManager.qureyAllSessionUnreadCount();
-		int notifyUnreadCount = IMessageSqlManager.getUnNotifyUnreadCount();
-		int count = unreadCount;
-		if (unreadCount >= notifyUnreadCount) {
-			count = unreadCount - notifyUnreadCount;
-		}
-		if (mLauncherUITabView != null) {
-			mLauncherUITabView.updateMainTabUnread(count);
-		}
-	}
-
-	@Override
-	public boolean onLongClick(View v) {
-		CCPAppManager.showCodecConfigMenu(this);
-		return true;
-	}
-
-	/**
-	 * TabView 页面适配器
-	 *
-	 * @author 容联•云通讯
-	 * @version 4.0
-	 * @date 2014-12-4
-	 */
-	private class LauncherViewPagerAdapter extends FragmentStatePagerAdapter
-			implements ViewPager.OnPageChangeListener,
-			CCPLauncherUITabView.OnUITabViewClickListener {
-		/**
-         *
-         */
-		private int mClickTabCounts;
-		private GroupListFragment mGroupListFragment;
-		private DiscussionListFragment mDissListFragment;
-
-		private final ViewPager mViewPager;
-		private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
-
-		final class TabInfo {
-			private final String tag;
-			private final Class<?> clss;
-			private final Bundle args;
-
-			TabInfo(String _tag, Class<?> _class, Bundle _args) {
-				tag = _tag;
-				clss = _class;
-				args = _args;
-			}
-		}
-
-		public LauncherViewPagerAdapter(FragmentActivity fm, ViewPager pager) {
-			super(fm.getSupportFragmentManager());
-			mViewPager = pager;
-			mViewPager.setAdapter(this);
-			mViewPager.setOnPageChangeListener(this);
-		}
-
-		public void addTab(String tabSpec, Class<?> clss, Bundle args) {
-			String tag = tabSpec;
-
-			TabInfo info = new TabInfo(tag, clss, args);
-			mTabs.add(info);
-			notifyDataSetChanged();
-		}
-
-		@Override
-		public int getCount() {
-			return 4;
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			return mLauncherUI.getTabView(position);
-		}
-
-		@Override
-		public void onPageScrollStateChanged(int state) {
-			LogUtil.d(LogUtil.getLogUtilsTag(LauncherViewPagerAdapter.class),
-					"onPageScrollStateChanged state = " + state);
-
-			if (state != ViewPager.SCROLL_STATE_IDLE
-					|| mGroupListFragment == null) {
-				return;
-			}
-			if (mGroupListFragment != null) {
-				mGroupListFragment.onGroupFragmentVisible(true);
-				mGroupListFragment = null;
-			}
-		}
-
-		@Override
-		public void onPageScrolled(int position, float positionOffset,
-				int positionOffsetPixels) {
-			LogUtil.d(LogUtil.getLogUtilsTag(LauncherViewPagerAdapter.class),
-					"onPageScrolled " + position + " " + positionOffset + " "
-							+ positionOffsetPixels);
-			if (mLauncherUITabView != null) {
-				mLauncherUITabView.doTranslateImageMatrix(position,
-						positionOffset);
-			}
-			if (positionOffset != 0.0F&&position==CCPLauncherUITabView.TAB_VIEW_THIRD) {
-				if (mGroupListFragment == null) {
-					mGroupListFragment = (GroupListFragment) getTabView(CCPLauncherUITabView.TAB_VIEW_THIRD);
-					mGroupListFragment.onGroupFragmentVisible(true);
-				}
-			}
-			if (positionOffset != 0.0F&&position==CCPLauncherUITabView.TAB_VIEW_FOUR) {
-				if (mDissListFragment == null) {
-					mDissListFragment = (DiscussionListFragment) getTabView(CCPLauncherUITabView.TAB_VIEW_FOUR);
-					mDissListFragment.onDisGroupFragmentVisible(true);
-				}
-			}
-		
-			
-			
-			
-			
-		}
-
-		@Override
-		public void onPageSelected(int position) {
-			LogUtil.d(LogUtil.getLogUtilsTag(LauncherViewPagerAdapter.class),
-					"onPageSelected");
-			if (mLauncherUITabView != null) {
-				mLauncherUITabView.doChangeTabViewDisplay(position);
-				mCurrentItemPosition = position;
-			}
-		}
-
-		@Override
-		public void onTabClick(int tabIndex) {
-			if (tabIndex == mCurrentItemPosition) {
-				LogUtil.d(
-						LogUtil.getLogUtilsTag(LauncherViewPagerAdapter.class),
-						"on click same index " + tabIndex);
-				// Perform a rolling
-				TabFragment item = (TabFragment) getItem(tabIndex);
-				item.onTabFragmentClick();
-				return;
-			}
-
-			mClickTabCounts += mClickTabCounts;
-			LogUtil.d(LogUtil.getLogUtilsTag(LauncherViewPagerAdapter.class),
-					"onUITabView Click count " + mClickTabCounts);
-			mViewPager.setCurrentItem(tabIndex);
-		}
-
-	}
-
 	/**
 	 * 网络注册状态改变
 	 *
 	 * @param connect
 	 */
 	public void onNetWorkNotify(ECDevice.ECConnectState connect) {
-		BaseFragment tabView = getTabView(TAB_CONVERSATION);
-		if (tabView instanceof ConversationListFragment && tabView.isAdded()) {
-			((ConversationListFragment) tabView).updateConnectState();
-		}
+			updateConnectState();
 	}
 
-	@Override
-	public void onClick(View v) {
-		if (v.getId() == R.id.btn_plus) {
-			controlPlusSubMenu();
-		}
-	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -872,89 +591,6 @@ public class LauncherActivity extends ECFragmentActivity implements
 		}
 	}
 
-	private final AdapterView.OnItemClickListener mOverflowItemCliclListener = new AdapterView.OnItemClickListener() {
-
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			controlPlusSubMenu();
-			
-			OverflowItem overflowItem= mItems[position];
-			String title=overflowItem.getTitle();
-			
-			if (getString(R.string.main_plus_inter_phone).equals(title)) {
-				// 实时对讲
-
-			} else if (getString(R.string.main_plus_meeting_voice).equals(title)) {
-			} else if (getString(R.string.main_plus_groupchat).equals(title)) {
-				// 创建群组
-				startActivity(new Intent(LauncherActivity.this, CreateGroupActivity.class));
-			} else if (getString(R.string.main_plus_querygroup).equals(title)) {
-				// 群组搜索
-				startActivity(new Intent(LauncherActivity.this,BaseSearch.class));
-			} else if (getString(R.string.main_plus_mcmessage).equals(title)) {
-				handleStartServiceEvent();
-				
-			} else if (getString(R.string.main_plus_settings).equals(title)) {
-				// 设置;
-				startActivity(new Intent(LauncherActivity.this,SettingsActivity.class));
-				
-				
-			} else if (getString(R.string.main_plus_meeting_video).equals(title)) {
-
-			}else if(getString(R.string.create_discussion).equals(title)){
-				
-				Intent intent=new Intent(LauncherActivity.this, MobileContactSelectActivity.class);
-				intent.putExtra("is_discussion", true);
-				intent.putExtra("isFromCreateDiscussion", true);
-				intent.putExtra("group_select_need_result", true);
-				startActivity(intent);
-				
-				
-			}else if(getString(R.string.query_discussion).equals(title)){
-				
-				Intent intent=new Intent(LauncherActivity.this, ECDiscussionActivity.class);
-				intent.putExtra("is_discussion", true);
-				
-				startActivity(intent);
-				
-			}else if(getString(R.string.main_plus_money).equals(title)){
-
-			}else if(getString(R.string.main_plus_sharemeeting).equals(title)){
-
-
-
-
-
-			}else if(getString(R.string.main_plus_live).equalsIgnoreCase(title)){
-
-			}
-		}
-
-	};
-
-	/**
-	 * 在线客服
-	 */
-	private void handleStartServiceEvent() {
-		showProcessDialog();
-		CustomerServiceHelper.startService(ContactLogic.CUSTOM_SERVICE,
-				new CustomerServiceHelper.OnStartCustomerServiceListener() {
-					@Override
-					public void onError(ECError error) {
-						dismissPostingDialog();
-					}
-
-					@Override
-					public void onServiceStart(String event) {
-						dismissPostingDialog();
-						CCPAppManager.startCustomerServiceAction(
-								LauncherActivity.this, event);
-					}
-				});
-	}
-
-	private InternalReceiver internalReceiver;
 
 	/**
 	 * 注册广播
@@ -989,12 +625,13 @@ public class LauncherActivity extends ECFragmentActivity implements
 			} else if (SDKCoreHelper.ACTION_SDK_CONNECT.equals(intent
 					.getAction())) {
 				doInitAction();
-				// tetstMesge();
-				BaseFragment tabView = getTabView(TAB_CONVERSATION);
-				if (tabView != null
-						&& tabView instanceof ConversationListFragment) {
-					((ConversationListFragment) tabView).updateConnectState();
+				try {
+					updateConnectState();
+				}catch (Exception e){
+					e.printStackTrace();
 				}
+
+
 			} else if (SDKCoreHelper.ACTION_KICK_OFF.equals(intent.getAction())) {
 				String kickoffText = intent.getStringExtra("kickoffText");
 				handlerKickOff(kickoffText);
@@ -1114,4 +751,731 @@ public class LauncherActivity extends ECFragmentActivity implements
 		mPostingdialog.dismiss();
 		mPostingdialog = null;
 	}
+
+
+	private void initView() {
+		setContentView(R.layout.activity_splash);
+		imageView_lv2 = (ImageView)findViewById(R.id.lv2);
+		imageView_lv = (ImageView)findViewById(R.id.lv);
+		imageView_hong = (ImageView)findViewById(R.id.hong);
+		imageView_hong2 = (ImageView)findViewById(R.id.hong2);
+		imageView_huang = (ImageView)findViewById(R.id.huang);
+		imageView_cheng = (ImageView)findViewById(R.id.cheng);
+		imageView_zi = (ImageView)findViewById(R.id.zi);
+		imageView_you_and_me = (ImageView)findViewById(R.id.you_and_me);
+		imageView_lv2.setVisibility(View.INVISIBLE);
+		imageView_lv.setVisibility(View.INVISIBLE);
+		imageView_hong.setVisibility(View.INVISIBLE);
+		imageView_hong2.setVisibility(View.INVISIBLE);
+		imageView_huang.setVisibility(View.INVISIBLE);
+		imageView_cheng.setVisibility(View.INVISIBLE);
+		imageView_zi.setVisibility(View.INVISIBLE);
+		imageView_you_and_me.setVisibility(View.INVISIBLE);
+
+	}
+
+	private void initAnimation() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,500f,0f);
+		translateAnimation.setDuration(1500);
+		translateAnimation.setInterpolator(decelerateInterpolator);
+		translateAnimation.setFillAfter(true);
+
+		set.addAnimation(rtAnimation);
+		set.addAnimation(scAnimation);
+		set.addAnimation(alAnimation);
+		set.addAnimation(translateAnimation);
+		set.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+
+	private void initAnimation2() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set2 = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,500f,0f);
+		translateAnimation.setDuration(1500);
+		translateAnimation.setInterpolator(decelerateInterpolator);
+		translateAnimation.setFillAfter(true);
+
+		set2.addAnimation(rtAnimation);
+		set2.addAnimation(scAnimation);
+		set2.addAnimation(alAnimation);
+		set2.addAnimation(translateAnimation);
+		set2.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+	private void initAnimation3() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set3 = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,500f,0f);
+		translateAnimation.setDuration(1500);
+		translateAnimation.setInterpolator(decelerateInterpolator);
+		translateAnimation.setFillAfter(true);
+
+		set3.addAnimation(rtAnimation);
+		set3.addAnimation(scAnimation);
+		set3.addAnimation(alAnimation);
+		set3.addAnimation(translateAnimation);
+		set3.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+
+	private void initAnimation4() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set4 = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,500f,0f);
+		translateAnimation.setDuration(1500);
+		translateAnimation.setInterpolator(decelerateInterpolator);
+		translateAnimation.setFillAfter(true);
+
+		set4.addAnimation(rtAnimation);
+		set4.addAnimation(scAnimation);
+		set4.addAnimation(alAnimation);
+		set4.addAnimation(translateAnimation);
+		set4.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+	private void initAnimation5() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set5 = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,500f,0f);
+		translateAnimation.setDuration(1500);
+		translateAnimation.setInterpolator(decelerateInterpolator);
+		translateAnimation.setFillAfter(true);
+
+		set5.addAnimation(rtAnimation);
+		set5.addAnimation(scAnimation);
+		set5.addAnimation(alAnimation);
+		set5.addAnimation(translateAnimation);
+		set5.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+
+
+	private void initAnimation6() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set6 = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		TranslateAnimation translateAnimation = new TranslateAnimation(0f,0f,500f,0f);
+		translateAnimation.setDuration(1500);
+		translateAnimation.setInterpolator(decelerateInterpolator);
+		translateAnimation.setFillAfter(true);
+
+		set6.addAnimation(rtAnimation);
+		set6.addAnimation(scAnimation);
+		set6.addAnimation(alAnimation);
+		set6.addAnimation(translateAnimation);
+		set6.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+	private void initAnimationzi() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set_zi = new AnimationSet(false);
+		RotateAnimation rtAnimation = new RotateAnimation(0, 360,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		rtAnimation.setDuration(1500);
+		rtAnimation.setFillAfter(true);
+		rtAnimation.setInterpolator(decelerateInterpolator);
+
+		ScaleAnimation scAnimation = new ScaleAnimation(0, 1, 0, 1,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		scAnimation.setDuration(1500);
+		scAnimation.setFillAfter(true);
+		scAnimation.setInterpolator(decelerateInterpolator);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+
+		set_zi.addAnimation(rtAnimation);
+		set_zi.addAnimation(scAnimation);
+		set_zi.addAnimation(alAnimation);
+		set_zi.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+//                startActivity(new Intent(SplashActivity.this,
+//                        MainActivity.class));
+//                finish();
+			}
+		});
+
+	}
+
+
+	private void initAnimationyou() {
+		DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator();
+		set_you = new AnimationSet(false);
+
+		AlphaAnimation alAnimation = new AlphaAnimation(0, 1);
+		alAnimation.setDuration(1500);
+		alAnimation.setFillAfter(true);
+		alAnimation.setInterpolator(decelerateInterpolator);
+		set_you.addAnimation(alAnimation);
+		set_you.setAnimationListener(new Animation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+			}
+		});
+
+	}
+
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case 1:
+					imageView_lv2.setVisibility(View.VISIBLE);
+					imageView_lv2.startAnimation(set);
+					handler.sendEmptyMessageDelayed(2,100);
+					break;
+				case 2:
+					imageView_lv.setVisibility(View.VISIBLE);
+					imageView_lv.startAnimation(set2);
+					handler.sendEmptyMessageDelayed(3,100);
+					break;
+				case 3:
+					imageView_hong.setVisibility(View.VISIBLE);
+					imageView_hong.startAnimation(set3);
+					handler.sendEmptyMessageDelayed(4,100);
+					break;
+				case 4:
+					imageView_hong2.setVisibility(View.VISIBLE);
+					imageView_hong2.startAnimation(set4);
+					handler.sendEmptyMessageDelayed(5,100);
+					break;
+				case 5:
+					imageView_huang.setVisibility(View.VISIBLE);
+					imageView_huang.startAnimation(set5);
+					handler.sendEmptyMessageDelayed(6,100);
+					break;
+				case 6:
+					imageView_cheng.setVisibility(View.VISIBLE);
+					imageView_you_and_me.setVisibility(View.VISIBLE);
+					imageView_zi.setVisibility(View.VISIBLE);
+					imageView_cheng.startAnimation(set6);
+					imageView_you_and_me.startAnimation(set_you);
+					imageView_zi.startAnimation(set_zi);
+					ECHandlerHelper.postDelayedRunnOnUI(initRunnable, 5000);
+					break;
+			}
+		}
+	};
+
+
+
+
+
+	final private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View visew, int position,
+								long id) {
+
+			if(mAdapter != null) {
+				int headerViewsCount = mListView.getHeaderViewsCount();
+				if(position < headerViewsCount) {
+					return;
+				}
+				int _position = position - headerViewsCount;
+
+				if(mAdapter == null || mAdapter.getItem(_position) == null) {
+					return ;
+				}
+				Conversation conversation = mAdapter.getItem(_position);
+				int  type =  conversation.getMsgType();
+				if(type == 1000) {
+					Intent intent = new Intent(LauncherActivity.this , GroupNoticeActivity.class);
+					startActivity(intent);
+					return ;
+				}
+				if(ContactLogic.isCustomService(conversation.getSessionId())) {
+					showProcessDialog();
+					dispatchCustomerService(conversation.getSessionId());
+					return ;
+				}
+
+				CCPAppManager.startChattingAction(LauncherActivity.this , conversation.getSessionId() , conversation.getUsername());
+			}
+		}
+	};
+
+	/**
+	 * 处理在线客服界面请求
+	 * @param sessionId
+	 */
+	private void dispatchCustomerService(String sessionId) {
+		CustomerServiceHelper.startService(sessionId, new CustomerServiceHelper.OnStartCustomerServiceListener() {
+			@Override
+			public void onServiceStart(String event) {
+				dismissPostingDialog();
+				CCPAppManager.startCustomerServiceAction(LauncherActivity.this , event);
+			}
+
+			@Override
+			public void onError(ECError error) {
+				dismissPostingDialog();
+			}
+		});
+	}
+
+	private final AdapterView.OnItemLongClickListener mOnLongClickListener = new AdapterView.OnItemLongClickListener() {
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			if(mAdapter != null) {
+				int headerViewsCount = mListView.getHeaderViewsCount();
+				if (position < headerViewsCount) {
+					return false;
+				}
+				int _position = position - headerViewsCount;
+
+				if (mAdapter == null || mAdapter.getItem(_position) == null) {
+					return false;
+				}
+				Conversation conversation = mAdapter.getItem(_position);
+				final int itemPosition = position;
+				final String[] menu = buildMenu(conversation);
+				ECListDialog dialog = new ECListDialog(LauncherActivity.this, /*new String[]{getString(R.string.main_delete)}*/menu);
+				dialog.setOnDialogItemClickListener(new ECListDialog.OnDialogItemClickListener() {
+					@Override
+					public void onDialogItemClick(Dialog d, int position) {
+						handleContentMenuClick(itemPosition ,position);
+					}
+				});
+				dialog.setTitle(conversation.getUsername());
+				dialog.show();
+				return true;
+			}
+			return false;
+		}
+	};
+
+
+	private String[] buildMenu(Conversation conversation) {//设置长按条目 2*2
+		if(conversation != null && conversation.getSessionId() != null) {
+			boolean isTop = ConversationSqlManager.querySessionisTopBySessionId(conversation.getSessionId());//支持单人、群组
+			if(conversation.getSessionId().toLowerCase().startsWith("g")) {
+				ECGroup ecGroup = GroupSqlManager.getECGroup(conversation.getSessionId());
+				boolean isNotice =ecGroup.isNotice();
+				if(ecGroup == null || !GroupSqlManager.getJoinState(ecGroup.getGroupId())) {
+					return new String[]{getString(R.string.main_delete)};
+				}
+				if(ecGroup.isNotice()) {
+					if(isTop) {
+						return new String[]{getString(R.string.main_delete) ,getString(R.string.cancel_top),getString(R.string.menu_mute_notify)};
+
+					}else {
+						return new String[]{getString(R.string.main_delete) ,getString(R.string.set_top),getString(R.string.menu_mute_notify)};
+					}
+				}else {
+					if(isTop){
+						return new String[]{getString(R.string.main_delete) ,getString(R.string.cancel_top),getString(R.string.menu_notify)};
+					}else {
+						return new String[]{getString(R.string.main_delete) ,getString(R.string.set_top),getString(R.string.menu_notify)};
+
+					}
+
+				}
+			}else {
+				if(isTop){
+					return new String[]{getString(R.string.main_delete) ,getString(R.string.cancel_top)};
+				}else {
+					return new String[]{getString(R.string.main_delete) ,getString(R.string.set_top)};
+
+				}
+
+			}
+		}
+		return new String[]{getString(R.string.main_delete)};
+	}
+
+
+
+	private void setcancelTopSession(ArrayList<String> arrayList ,String item){
+		if(!arrayList.contains(item)){
+			ConversationSqlManager.updateSessionToTop(item,false);
+		}
+
+	}
+
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		IMessageSqlManager.unregisterMsgObserver(mAdapter);
+	}
+
+
+
+	private void reTryConnect() {
+		ECDevice.ECConnectState connectState = SDKCoreHelper.getConnectState();
+		if(connectState == null || connectState == ECDevice.ECConnectState.CONNECT_FAILED) {
+
+			if(!TextUtils.isEmpty(getAutoRegistAccount())){
+				SDKCoreHelper.init(this);
+			}
+		}
+	}
+
+	public void  updateConnectState() {
+
+		ECDevice.ECConnectState connect = SDKCoreHelper.getConnectState();
+		if(connect == ECDevice.ECConnectState.CONNECTING) {
+			mBannerView.setNetWarnText(getString(R.string.connecting_server));
+			mBannerView.reconnect(true);
+		} else if (connect == ECDevice.ECConnectState.CONNECT_FAILED) {
+			mBannerView.setNetWarnText(getString(R.string.connect_server_error));
+			mBannerView.reconnect(false);
+		} else if (connect == ECDevice.ECConnectState.CONNECT_SUCCESS) {
+			mBannerView.hideWarnBannerView();
+		}
+		LogUtil.d(TAG, "updateConnectState connect :" + connect.name());
+	}
+
+
+	private Boolean handleContentMenuClick(int convresion ,int position) {
+		if(mAdapter != null) {
+			int headerViewsCount = mListView.getHeaderViewsCount();
+			if (convresion < headerViewsCount) {
+				return false;
+			}
+			int _position = convresion - headerViewsCount;
+
+			if (mAdapter == null || mAdapter.getItem(_position) == null) {
+				return false;
+			}
+			final Conversation conversation = mAdapter.getItem(_position);
+			switch (position) {
+				case 0:
+					showProcessDialog();
+					ECHandlerHelper handlerHelper = new ECHandlerHelper();
+					handlerHelper.postRunnOnThead(new Runnable() {
+						@Override
+						public void run() {
+							IMessageSqlManager.deleteChattingMessage(conversation.getSessionId());
+							ToastUtil.showMessage(R.string.clear_msg_success);
+							LauncherActivity.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									dismissPostingDialog();
+									mAdapter.notifyChange();
+								}
+							});
+						}
+					});
+					break;
+				case 2:
+					showProcessDialog();
+					final boolean notify = GroupSqlManager.isGroupNotify(conversation.getSessionId());
+					ECGroupOption option = new ECGroupOption();
+					option.setGroupId(conversation.getSessionId());
+					option.setRule(notify ? ECGroupOption.Rule.SILENCE :ECGroupOption.Rule.NORMAL);
+					GroupService.setGroupMessageOption(option, new GroupService.GroupOptionCallback() {
+						@Override
+						public void onComplete(String groupId) {
+							if(mAdapter != null) {
+								mAdapter.notifyChange();
+							}
+							ToastUtil.showMessage(notify?R.string.new_msg_mute_notify : R.string.new_msg_notify);
+							dismissPostingDialog();
+						}
+
+						@Override
+						public void onError(ECError error) {
+							dismissPostingDialog();
+							ToastUtil.showMessage("设置失败");
+						}
+					});
+					break;
+
+				case 1 :
+					showProcessDialog();
+					final boolean isTop = ConversationSqlManager.querySessionisTopBySessionId(conversation.getSessionId());
+					ECChatManager chatManager = SDKCoreHelper.getECChatManager();
+					if(chatManager ==null){
+						return null;
+					}
+					chatManager.setSessionToTop(conversation.getSessionId(), !isTop, new ECChatManager.OnSetContactToTopListener() {
+						@Override
+						public void onSetContactResult(ECError error, String contact) {
+
+							dismissPostingDialog();
+							if(error.errorCode == SdkErrorCode.REQUEST_SUCCESS){
+								ConversationSqlManager.updateSessionToTop(conversation.getSessionId(),!isTop);
+								mAdapter.notifyChange();
+								ToastUtil.showMessage("设置成功");
+							}else {
+								ToastUtil.showMessage("设置失败");
+							}
+						}
+					});
+					break;
+				default:
+					break;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void OnListAdapterCallBack() {
+
+	}
+
+
+
+
+
 }
