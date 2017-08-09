@@ -777,8 +777,6 @@ public class IMChattingHelper implements OnChatReceiveListener,
 		mServicePersonVersion = version;
 		CCPAppManager.setPversion(version);
 		LogUtil.e(TAG, "onServicePersonVersion " + version);
-
-		ECApplication.version = version;
 	}
 
 	/**

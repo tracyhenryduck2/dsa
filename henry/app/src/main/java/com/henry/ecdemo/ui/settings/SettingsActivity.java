@@ -418,7 +418,6 @@ public class SettingsActivity extends ECSuperActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.text_right:
-                startActivity(new Intent(this, SettingPersionInfoActivity.class));
                 break;
             case R.id.settings_about:
                 startActivity(new Intent(this , AboutActivity.class));

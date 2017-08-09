@@ -106,13 +106,17 @@ public class ContactSqlManager extends AbstractSQLManager {
             return -1;
         }
         try {
+
             ContentValues values = contact.buildContentValues();
             if (!hasPhoto) {
-                int index = getIntRandom(3, 0);
-                if (sex == 2) {
-                    index = 4;
-                }
-                String remark = ContactLogic.CONVER_PHONTO[index];
+                String remark = "";
+               if( Integer.parseInt(contact.getContactid())%2==1){
+                   remark = "my.jpg";
+               }else{
+                   remark = "you.jpg";
+               }
+
+
                 contact.setRemark(remark);
             }
             values.put(AbstractSQLManager.ContactsColumn.REMARK, contact.getRemark());

@@ -303,11 +303,6 @@
             android:screenOrientation="portrait" />
         <!-- 设置个人信息 -->
         <activity
-            android:name="com.henry.ecdemo.ui.settings.SettingPersionInfoActivity"
-            android:label="@string/title_activity_setting_persion_info"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.henry.ecdemo.ui.settings.WebQrActivity"
             android:screenOrientation="portrait" />
         <!-- 选择联系人呼叫界面 -->

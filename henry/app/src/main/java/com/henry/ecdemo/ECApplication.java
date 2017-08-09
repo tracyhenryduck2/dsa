@@ -40,8 +40,6 @@ public class ECApplication extends Application {
     private static PustDemoActivity mPustTestActivity = null;
 
     private static DemoMessageReceiver.DemoHandler handler = null;
-
-    public static int version = 0;
     public static  String  nick;
     public static String sign;
 

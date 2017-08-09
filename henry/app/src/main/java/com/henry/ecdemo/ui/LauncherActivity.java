@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -51,6 +52,7 @@ import com.henry.ecdemo.common.utils.DemoUtils;
 import com.henry.ecdemo.common.utils.ECNotificationManager;
 import com.henry.ecdemo.common.utils.ECPreferenceSettings;
 import com.henry.ecdemo.common.utils.ECPreferences;
+import com.henry.ecdemo.common.utils.FileAccessor;
 import com.henry.ecdemo.common.utils.LogUtil;
 import com.henry.ecdemo.common.utils.ToastUtil;
 import com.henry.ecdemo.common.view.NetWarnBannerView;
@@ -68,19 +70,12 @@ import com.henry.ecdemo.ui.chatting.IMChattingHelper;
 import com.henry.ecdemo.ui.chatting.model.Conversation;
 import com.henry.ecdemo.ui.contact.ContactLogic;
 import com.henry.ecdemo.ui.contact.ECContacts;
-import com.henry.ecdemo.ui.contact.MobileContactActivity;
-import com.henry.ecdemo.ui.contact.MobileContactSelectActivity;
-import com.henry.ecdemo.ui.group.BaseSearch;
-import com.henry.ecdemo.ui.group.CreateGroupActivity;
-import com.henry.ecdemo.ui.group.ECDiscussionActivity;
 import com.henry.ecdemo.ui.group.GroupNoticeActivity;
 import com.henry.ecdemo.ui.group.GroupService;
-import com.henry.ecdemo.ui.phonemodel.PhoneRouterUI;
-import com.henry.ecdemo.ui.settings.SettingPersionInfoActivity;
-import com.henry.ecdemo.ui.settings.SettingsActivity;
 import com.yuntongxun.ecsdk.ECChatManager;
 import com.yuntongxun.ecsdk.ECDevice;
 import com.yuntongxun.ecsdk.ECError;
+import com.yuntongxun.ecsdk.ECInitParams;
 import com.yuntongxun.ecsdk.SdkErrorCode;
 import com.yuntongxun.ecsdk.im.ECGroup;
 import com.yuntongxun.ecsdk.im.ECGroupOption;
@@ -227,22 +222,7 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 
 	}
 
-	private void settingPersonInfo(){//selftest
-		if (isUpSetPersonInfo()) {
-			Intent settingAction = new Intent(this,SettingPersionInfoActivity.class);
-			settingAction.putExtra("from_regist", true);
-			startActivityForResult(settingAction, 0x2a);
-		}
-	}
 
-	public static boolean isUpSetPersonInfo(){
-		ClientUser user = CCPAppManager.getClientUser();
-
-		LogUtil.e("version="+ECApplication.version);
-		return ECApplication.version==0;
-
-//		return  (user != null && user.getpVersion() == 0);
-	}
 
 	/**
 	 * 检测离线消息
@@ -408,11 +388,12 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 		}
 
 			String account = getAutoRegistAccount();
-			if (TextUtils.isEmpty(account)) {
-				startActivity(new Intent(this, LoginActivity.class));
-				finish();
-				return;
-			}
+		Log.i("ceshi","登录的账号信息:"+account);
+//			if (TextUtils.isEmpty(account)) {
+//				startActivity(new Intent(this, LoginActivity.class));
+//				finish();
+//				return;
+//			}
 
 
 			// 注册第一次登陆同步消息
@@ -424,7 +405,12 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 		   ClientUser c =	 CCPAppManager.getClientUser();
 			if(c!=null){
 				user.setpVersion(c.getpVersion());
-				ECApplication.version = c.getpVersion();
+			}else {
+
+				user = new ClientUser("2");
+				user.setAppKey(FileAccessor.getAppKey());
+				user.setAppToken(FileAccessor.getAppToken());
+				user.setLoginAuthType(ECInitParams.LoginAuthType.NORMAL_AUTH);
 			}
 			CCPAppManager.setClientUser(user);
 			if (!ContactSqlManager.hasContact(user.getUserId())) {
@@ -435,19 +421,13 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 			
 			if (SDKCoreHelper.getConnectState() != ECDevice.ECConnectState.CONNECT_SUCCESS
 					&& !SDKCoreHelper.isKickOff()) {
-				
-				ContactsCache.getInstance().load();
-				
-				if(!TextUtils.isEmpty(getAutoRegistAccount())){
+
 				 SDKCoreHelper.init(this);
-				}
 			}
 			// 初始化主界面Tab资源
 			if (!mInit) {
 				initLauncherUIView();
 			}
-
-		//OnUpdateMsgUnreadCounts();
 		getTopContacts();
 
 		try {
@@ -615,6 +595,8 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+
+			int error = intent.getIntExtra("error", -1);
 			if (intent == null || TextUtils.isEmpty(intent.getAction())) {
 				return;
 			}
@@ -629,6 +611,28 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 					updateConnectState();
 				}catch (Exception e){
 					e.printStackTrace();
+				}
+
+
+				// 初始注册结果，成功或者失败
+				if (SDKCoreHelper.getConnectState() == ECDevice.ECConnectState.CONNECT_SUCCESS
+						&& error == SdkErrorCode.REQUEST_SUCCESS) {
+					try {
+						ClientUser user = CCPAppManager.getClientUser();
+						ECPreferences.savePreference(ECPreferenceSettings.SETTINGS_REGIST_AUTO,user.toString(), true);
+					} catch (InvalidClassException e) {
+						e.printStackTrace();
+					}
+					return;
+				}
+				if (intent.hasExtra("error")) {
+					if (SdkErrorCode.CONNECTTING == error) {
+						return;
+					}
+					if (error == -1) {
+						ToastUtil.showMessage("请检查登陆参数是否正确[" + error + "]");
+					}
+					ToastUtil.showMessage("登录失败，请稍后重试[" + error + "]");
 				}
 
 
@@ -666,8 +670,6 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 				ClientUser user = new ClientUser("").from(account);
 				CCPAppManager.setClientUser(user);
 			}
-			settingPersonInfo();
-			IMChattingHelper.getInstance().getPersonInfo();
 			// 检测离线消息
 			checkOffineMessage();
 			mInitActionFlag = true;

@@ -2289,20 +2289,19 @@ public class ChattingFragment extends CCPFragment implements
                 finish();
                 break;
             case R.id.btn_right:
-//                if(!isPeerChat()) {
-//                    // 如果是点对点聊天
-//                    ECContacts contact = ContactSqlManager.getContact(mRecipients);
-//                    Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
-//                    intent.putExtra(ContactDetailActivity.RAW_ID, contact.getId());
-//                    startActivityForResult(intent, REQUEST_VIEW_CARD);
-//
-//                    return ;
-//                }
-//                // 群组聊天室
-//                Intent intent = new Intent(getActivity(), GroupInfoActivity.class);
-//                intent.putExtra(GroupInfoActivity.GROUP_ID, mRecipients);
-//                startActivityForResult(intent, REQUEST_VIEW_CARD);
-				startActivity(new Intent(this.getActivity(), CaptureActivity.class));
+                if(!isPeerChat()) {
+                    // 如果是点对点聊天
+                    ECContacts contact = ContactSqlManager.getContact(mRecipients);
+                    Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
+                    intent.putExtra(ContactDetailActivity.RAW_ID, contact.getId());
+                    startActivityForResult(intent, REQUEST_VIEW_CARD);
+
+                    return ;
+                }
+                // 群组聊天室
+                Intent intent = new Intent(getActivity(), GroupInfoActivity.class);
+                intent.putExtra(GroupInfoActivity.GROUP_ID, mRecipients);
+                startActivityForResult(intent, REQUEST_VIEW_CARD);
                 break;
             case R.id.btn_middle:
                 if (mListView != null) {
