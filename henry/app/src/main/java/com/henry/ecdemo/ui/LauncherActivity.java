@@ -27,13 +27,16 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ViewSwitcher;
 
 import com.henry.ecdemo.ECApplication;
 import com.henry.ecdemo.R;
@@ -90,7 +93,7 @@ import java.util.List;
  * 主界面（消息会话界面、联系人界面、群组界面）
  */
 @ActivityTransition(3)
-public class LauncherActivity extends ECFragmentActivity implements CCPListAdapter.OnListAdapterCallBackListener {
+public class LauncherActivity extends ECFragmentActivity implements CCPListAdapter.OnListAdapterCallBackListener,ViewSwitcher.ViewFactory {
 
 	private static final String TAG = "LauncherActivity";
 	/**
@@ -112,6 +115,10 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 	private ListView mListView;
 	private NetWarnBannerView mBannerView;
 	private ConversationAdapter mAdapter;
+	private ImageSwitcher is;
+	private Integer[] mImageIds = { R.drawable.img_01, R.drawable.img_02,
+			R.drawable.img_03, R.drawable.img_04, R.drawable.img_05,
+	};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -184,6 +191,13 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 		}
 
 		mListView = (ListView) findViewById(R.id.main_chatting_lv);
+		is = (ImageSwitcher)findViewById(R.id.imageswitch);
+		is.setFactory(this);
+		is.setImageResource(mImageIds[0]);
+		is.setInAnimation(AnimationUtils.loadAnimation(this,
+				android.R.anim.fade_in));
+		is.setOutAnimation(AnimationUtils.loadAnimation(this,
+				android.R.anim.fade_out));
 		View mEmptyView = findViewById(R.id.empty_conversation_tv);
 		mListView.setEmptyView(mEmptyView);
 		mListView.setDrawingCacheEnabled(false);
@@ -407,7 +421,7 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 				user.setpVersion(c.getpVersion());
 			}else {
 
-				user = new ClientUser("2");
+				user = new ClientUser("1");
 				user.setAppKey(FileAccessor.getAppKey());
 				user.setAppToken(FileAccessor.getAppToken());
 				user.setLoginAuthType(ECInitParams.LoginAuthType.NORMAL_AUTH);
@@ -589,6 +603,15 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 			internalReceiver = new InternalReceiver();
 		}
 		registerReceiver(internalReceiver, intentfilter);
+	}
+
+	@Override
+	public View makeView() {
+
+		ImageView i = new ImageView(this);
+		i.setBackgroundColor(0xFF000000);
+		i.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		return i;
 	}
 
 	private class InternalReceiver extends BroadcastReceiver {

@@ -8,7 +8,8 @@
 
     <RelativeLayout
         android:id="@+id/main_ui_container"
-        style="@style/NavPage" >
+        style="@style/NavPage"
+        android:layout_height="@dimen/NormalListHeight">
 
         <ListView
             android:id="@+id/main_chatting_lv"
@@ -31,5 +32,9 @@
             android:visibility="gone" />
 
     </RelativeLayout>
-
+   <ImageSwitcher
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:id="@+id/imageswitch"
+       android:background="@color/white"/>
 </LinearLayout>
