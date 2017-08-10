@@ -495,6 +495,14 @@ public class ChattingFragment extends CCPFragment implements
                 mUsername = mRecipients;
             }
         }
+
+
+		if(Integer.parseInt(mUsername)%2==1){
+			mUsername  = "нёN★гу_xjj";
+		}else{
+			mUsername = "钍钍钍钍";
+		}
+
         if(!isPeerChat()) {
             IMessageSqlManager.checkContact(mRecipients, mUsername);
         }

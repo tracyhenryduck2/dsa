@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -89,6 +90,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * 主界面（消息会话界面、联系人界面、群组界面）
  */
@@ -119,6 +123,8 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 	private Integer[] mImageIds = { R.drawable.img_01, R.drawable.img_02,
 			R.drawable.img_03, R.drawable.img_04, R.drawable.img_05,
 	};
+	private MyTask myTask;
+	private Timer timer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -137,6 +143,7 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 		// 设置页面默认为竖屏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		ECContentObservers.getInstance().initContentObserver();
+
 	}
 
 	@Override
@@ -225,7 +232,12 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 
 		// 如果是登陆过来的
 		doInitAction();
-
+		Log.i(TAG,"计数器初始化");
+		if(timer==null){
+			timer = new Timer();
+			myTask = new MyTask();
+			timer.schedule(myTask,5000,5000);
+		}
 		try {
 			updateConnectState();
 			IMessageSqlManager.registerMsgObserver(mAdapter);
@@ -233,6 +245,8 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+
+
 
 	}
 
@@ -357,6 +371,12 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 		if (internalReceiver != null) {
 			unregisterReceiver(internalReceiver);
 		}
+
+		if(timer!=null){
+			timer.cancel();
+			timer = null;
+			myTask = null;
+		}
 	}
 
 	@Override
@@ -421,7 +441,7 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 				user.setpVersion(c.getpVersion());
 			}else {
 
-				user = new ClientUser("1");
+				user = new ClientUser("2");
 				user.setAppKey(FileAccessor.getAppKey());
 				user.setAppToken(FileAccessor.getAppToken());
 				user.setLoginAuthType(ECInitParams.LoginAuthType.NORMAL_AUTH);
@@ -610,7 +630,16 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 
 		ImageView i = new ImageView(this);
 		i.setBackgroundColor(0xFF000000);
-		i.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		i.setScaleType(ImageView.ScaleType.CENTER);
+		ImageSwitcher.LayoutParams p = new ImageSwitcher.LayoutParams(
+
+				ImageSwitcher.LayoutParams.FILL_PARENT,
+
+				ImageSwitcher.LayoutParams.WRAP_CONTENT
+
+		);
+		p.gravity = Gravity.CENTER;
+		i.setLayoutParams(p);
 		return i;
 	}
 
@@ -1232,8 +1261,11 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 					imageView_zi.setVisibility(View.VISIBLE);
 					imageView_cheng.startAnimation(set6);
 					imageView_you_and_me.startAnimation(set_you);
-					imageView_zi.startAnimation(set_zi);
+					//imageView_zi.startAnimation(set_zi);
 					ECHandlerHelper.postDelayedRunnOnUI(initRunnable, 5000);
+					break;
+				case 7:
+                    is.setImageResource(mImageIds[index_pic]);
 					break;
 			}
 		}
@@ -1499,7 +1531,20 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 
 	}
 
+	private int index_pic = 0;
+    class MyTask extends TimerTask {
 
+		@Override
+		public void run() {
+            if(index_pic<4){
+				 index_pic ++;
+			}else {
+				index_pic = 0;
+			}
+            Log.i(TAG,"计数器正在走"+index_pic);
+			handler.sendEmptyMessage(7);
+		}
+	}
 
 
 

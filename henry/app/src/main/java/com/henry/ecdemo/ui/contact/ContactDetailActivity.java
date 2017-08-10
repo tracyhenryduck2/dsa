@@ -25,6 +25,7 @@ public class ContactDetailActivity extends ECSuperActivity implements View.OnCli
     private TextView mNumber;
 
     private ECContacts mContacts;
+    private String last_name;
 
     private View.OnClickListener onClickListener
             = new View.OnClickListener() {
@@ -82,7 +83,14 @@ public class ContactDetailActivity extends ECSuperActivity implements View.OnCli
         }
 
         mPhotoView.setImageBitmap(ContactLogic.getPhoto(mContacts.getRemark()));
-        mUsername.setText(TextUtils.isEmpty(mContacts.getNickname()) ?mContacts.getContactid() :mContacts.getNickname());
+
+        if(Integer.parseInt(mContacts.getNickname())%2==1){
+            last_name= "нёN★гу_xjj";
+        }else{
+            last_name = "钍钍钍钍";
+        }
+
+        mUsername.setText(TextUtils.isEmpty(mContacts.getNickname()) ?mContacts.getContactid() :last_name);
         mNumber.setText(mContacts.getContactid());
     }
 

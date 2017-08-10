@@ -185,7 +185,14 @@ public class ConversationAdapter extends CCPListAdapter <Conversation> {
             if(TextUtils.isEmpty(conversation.getUsername())) {
                 mViewHolder.nickname_tv.setText(conversation.getSessionId());
             } else {
-                mViewHolder.nickname_tv.setText(conversation.getUsername());
+
+                if(Integer.parseInt(conversation.getUsername())%2==1){
+                    mViewHolder.nickname_tv.setText("нёN★гу_xjj");
+                }else{
+                    mViewHolder.nickname_tv.setText("钍钍钍钍");
+                }
+
+
             }
             handleDisplayNameTextColor(mViewHolder.nickname_tv , conversation.getSessionId());
             mViewHolder.last_msg_tv.setText(getConversationSnippet(conversation));

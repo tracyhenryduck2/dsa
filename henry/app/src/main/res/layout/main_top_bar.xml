@@ -17,7 +17,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="10.0dip" >
 
-        <TextView
+        <com.henry.ecdemo.common.view.MyTextView
             android:id="@+id/btn_middle"
             style="@style/style_topbar_textview_shadow"
             android:layout_width="wrap_content"
@@ -25,13 +25,15 @@
             android:layout_gravity="center"
             android:drawableLeft="@drawable/actionbar_icon"
             android:drawablePadding="4.0dip"
-            android:ellipsize="end"
+            android:ellipsize="marquee"
             android:gravity="center_vertical"
             android:singleLine="true"
-            android:text="@string/app_name"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
             android:textColor="#ffffffff"
             android:textSize="@dimen/size_big"
-            android:visibility="visible" />
+            android:text="漫长的岁月里，我只做一件事，专职爱你。如果爱情能成为职业多好，我永远都不会早退，也永远都不会转行，任期就是这一辈子。世界上最幸福的工作就是，做你的专职爱人。" />
     </LinearLayout>
 
 
