@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.henry.ecdemo.ui.contact.ContactLogic;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -66,6 +67,7 @@ public class ImageGalleryFragment extends CCPFragment {
     private FrameLayout mSuccessLayout;
     private LinearLayout mFailLayout;
     private boolean isGif = false;
+    private boolean flag_avatar;
 
     public static ImageGalleryFragment newInstance(String imageUrl) {
         final ImageGalleryFragment f = new ImageGalleryFragment();
@@ -77,10 +79,11 @@ public class ImageGalleryFragment extends CCPFragment {
         return f;
     }
 
-    public static ImageGalleryFragment newInstance(ViewImageInfo entry) {
+    public static ImageGalleryFragment newInstance(ViewImageInfo entry,boolean flag_avatar) {
         final ImageGalleryFragment f = new ImageGalleryFragment();
         final Bundle args = new Bundle();
         args.putParcelable("entry", entry);
+        args.putBoolean("avatar",flag_avatar);
         f.setArguments(args);
 
         return f;
@@ -93,7 +96,7 @@ public class ImageGalleryFragment extends CCPFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntry  = getArguments() != null ? getArguments().<ViewImageInfo>getParcelable("entry") : null;
-       
+        flag_avatar = getArguments() != null ? getArguments().getBoolean("avatar") : null;
     }
 
 
@@ -157,7 +160,9 @@ public class ImageGalleryFragment extends CCPFragment {
         mImageUrl = mEntry.getPicurl();
         if (null != mImageUrl && !TextUtils.isEmpty(mImageUrl) && !mImageUrl.startsWith("http")) {
             // load 本地
-            mImageUrl = "file://" + FileAccessor.getImagePathName() + "/"+  mImageUrl;
+                if(!flag_avatar)
+                mImageUrl = "file://" + FileAccessor.getImagePathName() + "/"+  mImageUrl;
+
         } else {
             // 下载
             mImageUrl = mEntry.getPicurl();
@@ -204,70 +209,76 @@ public class ImageGalleryFragment extends CCPFragment {
 		   
 		    
 		}
-        ImageLoader.getInstance().displayImage(mImageUrl, mImageView, imageOptionsBuilder.build(), new SimpleImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-                progressBar.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(mThumbnailBitmap);
-            }
-
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                mImageView.setImageBitmap(mThumbnailBitmap);
-                String message = null;
-                switch (failReason.getType()) {
-                    case IO_ERROR:
-                    case UNKNOWN:
-                    case DECODING_ERROR:
-                        break ;
-                    case NETWORK_DENIED:
-                        message = "网络有问题，无法下载";
-                        break;
-                    case OUT_OF_MEMORY:
-                        message = "图片太大无法显示";
-                        break;
+        if(flag_avatar){
+            mImageView.setImageBitmap(ContactLogic.getPhoto(mImageUrl));
+        }else{
+            ImageLoader.getInstance().displayImage(mImageUrl, mImageView, imageOptionsBuilder.build(), new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String imageUri, View view) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    mImageView.setImageBitmap(mThumbnailBitmap);
                 }
-                if (message != null) {
-                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-                }
-                progressBar.setVisibility(View.GONE);
-                mEntry.setIsDownload(false);
-                mSuccessLayout.setVisibility(View.GONE);
-                mFailLayout.setVisibility(View.VISIBLE);
-            }
 
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                mSuccessLayout.setVisibility(View.VISIBLE);
-                mFailLayout.setVisibility(View.GONE);
-                mEntry.setIsDownload(true);
-                progressBar.setVisibility(View.GONE);
-                imgCacheFile = DiskCacheUtils.findInCache(imageUri, ImageLoader.getInstance().getDiskCache());
-                if (imgCacheFile != null) {
-                    if (isGif || loadedImage.getHeight() > DemoUtils.getScreenHeight(getActivity())) {
-                        mCacheImageUrl = "file://" + imgCacheFile.getAbsolutePath();
-                        mImageView.setVisibility(View.GONE);
-                        showImgInWebView(mCacheImageUrl);
-                    } else {
-                        mImageView.setImageBitmap(loadedImage);
+
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                    mImageView.setImageBitmap(mThumbnailBitmap);
+                    String message = null;
+                    switch (failReason.getType()) {
+                        case IO_ERROR:
+                        case UNKNOWN:
+                        case DECODING_ERROR:
+                            break ;
+                        case NETWORK_DENIED:
+                            message = "网络有问题，无法下载";
+                            break;
+                        case OUT_OF_MEMORY:
+                            message = "图片太大无法显示";
+                            break;
                     }
+                    if (message != null) {
+                        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                    }
+                    progressBar.setVisibility(View.GONE);
+                    mEntry.setIsDownload(false);
+                    mSuccessLayout.setVisibility(View.GONE);
+                    mFailLayout.setVisibility(View.VISIBLE);
+                }
 
-                    if (imageUri.startsWith("http:")) {
-                        ImgInfo thumbimginfo = ImgInfoSqlManager.getInstance().getImgInfo(mEntry.getIndex());
-                        if(thumbimginfo != null && mCacheImageUrl != null) {
-                            thumbimginfo.setBigImgPath(mCacheImageUrl.substring(mCacheImageUrl.lastIndexOf("/")));
-                            ImgInfoSqlManager.getInstance().updateImageInfo(thumbimginfo);
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    mSuccessLayout.setVisibility(View.VISIBLE);
+                    mFailLayout.setVisibility(View.GONE);
+                    mEntry.setIsDownload(true);
+                    progressBar.setVisibility(View.GONE);
+                    imgCacheFile = DiskCacheUtils.findInCache(imageUri, ImageLoader.getInstance().getDiskCache());
+                    if (imgCacheFile != null) {
+                        if (isGif || loadedImage.getHeight() > DemoUtils.getScreenHeight(getActivity())) {
+                            mCacheImageUrl = "file://" + imgCacheFile.getAbsolutePath();
+                            mImageView.setVisibility(View.GONE);
+                            showImgInWebView(mCacheImageUrl);
+                        } else {
+                            mImageView.setImageBitmap(loadedImage);
+                        }
+
+                        if (imageUri.startsWith("http:")) {
+                            ImgInfo thumbimginfo = ImgInfoSqlManager.getInstance().getImgInfo(mEntry.getIndex());
+                            if(thumbimginfo != null && mCacheImageUrl != null) {
+                                thumbimginfo.setBigImgPath(mCacheImageUrl.substring(mCacheImageUrl.lastIndexOf("/")));
+                                ImgInfoSqlManager.getInstance().updateImageInfo(thumbimginfo);
+                            }
                         }
                     }
                 }
-            }
-        }, new ImageLoadingProgressListener() {
-            @Override
-            public void onProgressUpdate(String s, View view, int current, int total) {
-                mProgress.setText((int)(current * 100f / total) + " %");
-            }
-        });
+            }, new ImageLoadingProgressListener() {
+                @Override
+                public void onProgressUpdate(String s, View view, int current, int total) {
+                    mProgress.setText((int)(current * 100f / total) + " %");
+                }
+            });
+
+
+        }
     }
 
     private void initWebView() {

@@ -630,10 +630,16 @@ public class IMChattingHelper implements OnChatReceiveListener,
 			if (contact == null) {
 				return;
 			}
+            String last_name = "";
+			if(Integer.parseInt(contact.getNickname())%2==1){
+				last_name= "нёN★гу_xjj";
+			}else{
+				last_name = "钍钍钍钍";
+			}
 			ECNotificationManager.getInstance()
 					.showCustomNewMessageNotification(
 							CCPAppManager.getContext(), lastMsg,
-							contact.getNickname(), msg.getSessionId(),
+							last_name, msg.getSessionId(),
 							msg.getType().ordinal());
 		}
 	}

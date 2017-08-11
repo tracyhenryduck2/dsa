@@ -441,7 +441,8 @@ public class LauncherActivity extends ECFragmentActivity implements CCPListAdapt
 				user.setpVersion(c.getpVersion());
 			}else {
 
-				user = new ClientUser("2");
+				user = new ClientUser("1");
+				user.setUserName("1");
 				user.setAppKey(FileAccessor.getAppKey());
 				user.setAppToken(FileAccessor.getAppToken());
 				user.setLoginAuthType(ECInitParams.LoginAuthType.NORMAL_AUTH);

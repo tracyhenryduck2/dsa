@@ -33,7 +33,9 @@ public class ImageGralleryPagerActivity extends ECSuperActivity implements View.
     public static final String EXTRA_IMAGE_INDEX = "image_index";
     public static final String EXTRA_IMAGE_URLS = "image_urls";
     public static final String EXTRA_IMAGE_URLS_ID = "image_urls_id";
+    public static final String INNER_RESOURCE = "inner_resource";
     public static boolean isFireMsg=false;
+    private boolean flag_avatar;
 
     /**
      *
@@ -65,7 +67,7 @@ public class ImageGralleryPagerActivity extends ECSuperActivity implements View.
         pagerPosition = getIntent().getIntExtra(EXTRA_IMAGE_INDEX, 0);
         urls = getIntent().getParcelableArrayListExtra(EXTRA_IMAGE_URLS);
         sgId = getIntent().getStringExtra(EXTRA_IMAGE_URLS_ID);
-
+        flag_avatar = getIntent().getBooleanExtra(INNER_RESOURCE,false);
 
         if(urls == null || urls.isEmpty()) {
             finish();
@@ -250,7 +252,7 @@ public class ImageGralleryPagerActivity extends ECSuperActivity implements View.
         @Override
         public Fragment getItem(int position) {
             ViewImageInfo url = fileList.get(position);
-            return ImageGalleryFragment.newInstance(url);
+            return ImageGalleryFragment.newInstance(url,flag_avatar);
         }
 
     }

@@ -186,7 +186,7 @@ public class CCPAppManager {
      * @param value
      */
     public static void startChattingImageViewAction(Context cotnext, ImageMsgInfoEntry value) {
-        Intent intent = new Intent(cotnext, ImageGralleryPagerActivity.class);
+        Intent intent = new Intent(cotnext, ImageGalleryActivity.class);
         intent.putExtra(ImageGalleryActivity.CHATTING_MESSAGE, value);
         cotnext.startActivity(intent);
     }
@@ -204,6 +204,23 @@ public class CCPAppManager {
         intent.putExtra(ImageGralleryPagerActivity.EXTRA_IMAGE_URLS_ID, msgId);
         ctx.startActivity(intent);
     }
+
+
+    /**
+     * 批量查看本地的图片
+     * @param ctx
+     * @param position
+     * @param session
+     */
+    public static void startAvatarImageViewAction(Context ctx , int position , ArrayList<ViewImageInfo> session,String msgId) {
+        Intent intent = new Intent(ctx, ImageGralleryPagerActivity.class);
+        intent.putExtra(ImageGralleryPagerActivity.EXTRA_IMAGE_INDEX, position);
+        intent.putParcelableArrayListExtra(ImageGralleryPagerActivity.EXTRA_IMAGE_URLS, session);
+        intent.putExtra(ImageGralleryPagerActivity.EXTRA_IMAGE_URLS_ID, msgId);
+        intent.putExtra(ImageGralleryPagerActivity.INNER_RESOURCE,true);
+        ctx.startActivity(intent);
+    }
+
 
     /**
      * 获取应用程序版本名称

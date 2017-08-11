@@ -1,5 +1,6 @@
 package com.henry.ecdemo.ui.contact;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,11 +9,19 @@ import android.widget.TextView;
 
 import com.henry.ecdemo.R;
 import com.henry.ecdemo.common.CCPAppManager;
+import com.henry.ecdemo.common.utils.ECPreferenceSettings;
+import com.henry.ecdemo.common.utils.ECPreferences;
 import com.henry.ecdemo.common.utils.ToastUtil;
 import com.henry.ecdemo.storage.ContactSqlManager;
 import com.henry.ecdemo.ui.ECSuperActivity;
 import com.henry.ecdemo.ui.SDKCoreHelper;
+import com.henry.ecdemo.ui.chatting.ImagePreviewActivity;
+import com.henry.ecdemo.ui.chatting.ViewImageInfo;
 import com.henry.ecdemo.ui.chatting.base.EmojiconTextView;
+
+import java.io.InvalidClassException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactDetailActivity extends ECSuperActivity implements View.OnClickListener{
 
@@ -83,7 +92,7 @@ public class ContactDetailActivity extends ECSuperActivity implements View.OnCli
         }
 
         mPhotoView.setImageBitmap(ContactLogic.getPhoto(mContacts.getRemark()));
-
+        mPhotoView.setOnClickListener(this);
         if(Integer.parseInt(mContacts.getNickname())%2==1){
             last_name= "нёN★гу_xjj";
         }else{
@@ -138,7 +147,12 @@ public class ContactDetailActivity extends ECSuperActivity implements View.OnCli
                 hideSoftKeyboard();
                 finish();
                 break;
-
+            case R.id.desc:
+                ArrayList<ViewImageInfo> urls = new ArrayList<>();
+                ViewImageInfo viewImageInfo = new ViewImageInfo(0,mContacts.getRemark(),mContacts.getRemark());
+                urls.add(viewImageInfo);
+               CCPAppManager.startAvatarImageViewAction(this,0,urls,"123");
+                break;
             default:
                 break;
         }
